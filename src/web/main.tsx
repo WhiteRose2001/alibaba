@@ -1,32 +1,35 @@
 // src/main.tsx
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-import { BrowserRouter } from 'react-router-dom'
+import "@fontsource/inter/400.css";
+import "@fontsource/inter/500.css";
+import "@fontsource/inter/600.css";
 
-import CssBaseline from '@mui/material/CssBaseline'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
 
-const ColorModeContext = React.createContext({ toggleColorMode: () => {} })
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+import { BrowserRouter } from "react-router-dom";
+
+import CssBaseline from "@mui/material/CssBaseline";
+import { ThemeProvider } from "@mui/material/styles";
+
+import getTheme from "./theme/theme";
+
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
 function Main() {
-  const [mode, setMode] = React.useState<'light' | 'dark'>('light')
+  const [mode, setMode] = React.useState<"light" | "dark">("dark");
 
   const colorMode = React.useMemo(
     () => ({
-      toggleColorMode: () =>
-        setMode((prev) => (prev === 'light' ? 'dark' : 'light')),
+      toggleColorMode: () => setMode((prev) => (prev === "light" ? "dark" : "light")),
     }),
     []
-  )
+  );
 
-  const theme = React.useMemo(
-    () =>
-      createTheme({
-        palette: { mode },
-      }),
-    [mode]
-  )
+  const theme = React.useMemo(() => getTheme(mode), [mode]);
 
   return (
     <ColorModeContext.Provider value={colorMode}>
@@ -37,9 +40,9 @@ function Main() {
         </BrowserRouter>
       </ThemeProvider>
     </ColorModeContext.Provider>
-  )
+  );
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<Main />)
+ReactDOM.createRoot(document.getElementById("root")!).render(<Main />);
 
-export type ColorModeContextType = typeof ColorModeContext
+export type ColorModeContextType = typeof ColorModeContext;

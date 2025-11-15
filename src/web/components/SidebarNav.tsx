@@ -86,11 +86,6 @@ export default function SidebarNav({ navigation, onNavigate, collapsed }: Props)
   const SIDEBAR_EXPANDED = 240;
   const SIDEBAR_COLLAPSED = 72;
 
-  const accentFrom = "#ffac47";
-  const accentTo = "#ff448c";
-  const accentGradient = `linear-gradient(135deg, ${accentFrom} 0%, ${accentTo} 100%)`;
-  const hoverGradient = `linear-gradient(135deg, ${alpha(accentFrom, 0.10)}, ${alpha(accentTo, 0.06)})`;
-
   return (
     <Box
       component="nav"
@@ -148,13 +143,7 @@ export default function SidebarNav({ navigation, onNavigate, collapsed }: Props)
                   sx={{
                     py: 1.25,
                     px: 2,
-                    gap: 1,
-                    ...(isActive && {
-                      background: accentGradient,
-                      color: "#fff",
-                      "&:hover": { background: accentGradient },
-                    }),
-                    "&:hover": { background: hoverGradient },
+                    gap: 1
                   }}
                 >
                   <ListItemIcon
@@ -162,7 +151,6 @@ export default function SidebarNav({ navigation, onNavigate, collapsed }: Props)
                       minWidth: 40,
                       mr: 2,
                       justifyContent: "center",
-                      color: isActive ? "#fff" : "text.secondary",
                     }}
                   >
                     {iconNode}

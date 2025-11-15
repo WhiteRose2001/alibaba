@@ -1,6 +1,5 @@
 // src/web/components/TopBar.tsx
 import React from 'react';
-import { alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
@@ -26,8 +25,6 @@ type Props = {
   setCollapsed: (v: boolean) => void;
 };
 
-const logo = '/logo192.png';
-
 export default function TopBar({
   onUploadClick,
   onToggleTheme,
@@ -42,14 +39,6 @@ export default function TopBar({
 
   const SIDEBAR_EXPANDED = 240;
   const SIDEBAR_COLLAPSED = 72;
-
-  const accentFrom = '#ffac47';
-  const accentTo = '#ff448c';
-  const accentGradient = `linear-gradient(135deg, ${accentFrom} 0%, ${accentTo} 100%)`;
-  const hoverGradient = `linear-gradient(135deg, ${alpha(
-    accentFrom,
-    0.12
-  )}, ${alpha(accentTo, 0.08)})`;
 
   return (
     <AppBar
@@ -95,25 +84,12 @@ export default function TopBar({
             startIcon={<UploadFileIcon />}
             size="small"
             onClick={onUploadClick}
-            sx={{
-              background: accentGradient,
-              color: '#fff',
-              boxShadow: 'none',
-              '&:hover': {
-                background: hoverGradient,
-                boxShadow: 'none',
-              },
-            }}
           >
             Upload
           </Button>
 
           <Tooltip title="Toggle theme">
-            <IconButton
-              onClick={onToggleTheme}
-              size="small"
-              sx={{ color: accentTo }}
-            >
+            <IconButton onClick={onToggleTheme} size="small">
               {isDark ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
           </Tooltip>

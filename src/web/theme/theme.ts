@@ -1,121 +1,196 @@
 // src/theme/theme.ts
 import { createTheme } from "@mui/material/styles";
+import type { PaletteOptions, PaletteMode } from "@mui/material/styles";
 
-const ACCENT_FROM = "#ffac47";
-const ACCENT_TO = "#ff448c";
-const ACCENT_GRADIENT = `linear-gradient(135deg, ${ACCENT_FROM} 0%, ${ACCENT_TO} 100%)`;
+/**
+ * Ścisły typ palety, w którym pewne pola są wymagane.
+ * Dzięki temu można bezpiecznie odwoływać się do palette.primary.main itp.
+ */
+type StrictColor = {
+  main: string;
+  light?: string;
+  dark?: string;
+  contrastText?: string;
+};
 
-export const theme = createTheme({
-  palette: {
-    primary: {
-      main: ACCENT_TO,
-    },
-    secondary: {
-      main: ACCENT_FROM,
-    },
+type StrictPalette = PaletteOptions & {
+  mode: PaletteMode;
+  primary: StrictColor;
+  secondary: StrictColor;
+  background: { default: string; paper: string };
+  text: { primary: string; secondary?: string };
+  action?: { hover?: string };
+};
+
+/* DARK THEME — Cyber Twilight */
+export const DARK_PALETTE: StrictPalette = {
+  mode: "dark",
+  primary: {
+    main: "#7B66FF",
+    contrastText: "#ffffff",
   },
+  secondary: {
+    main: "#131722",
+    contrastText: "#000000",
+  },
+  background: {
+    default: "#0C0F18",
+    paper: "#131722",
+  },
+  text: {
+    primary: "#E8ECF7",
+    secondary: "#8993B2",
+  },
+  action: {
+    hover: "rgba(123, 102, 255, 0.12)",
+  },
+};
 
-  components: {
-    // globalne zmienne CSS udostępniane przez CssBaseline
-    MuiCssBaseline: {
-      styleOverrides: {
-        ":root": {
-          "--brand-accent-gradient": ACCENT_GRADIENT,
-          "--brand-accent-from": ACCENT_FROM,
-          "--brand-accent-to": ACCENT_TO,
+// rozszerzone pola żeby zadowolić StrictPalette jeśli oczekuje light/dark
+export const LIGHT_PALETTE: StrictPalette = {
+  mode: "light",
+  primary: {
+    main: "#ff478a",          // neon pink (Vice City core color)
+    contrastText: "#ffffff",
+  },
+  secondary: {
+    main: "#ffac4cff",          // neon cyan / Miami turquoise
+    contrastText: "#000000",
+  },
+  background: {
+    default: "#FDF8FF",       // bardzo jasny pastelowy róż
+    paper: "#ffffff",
+  },
+  text: {
+    primary: "#2A0F33",       // głęboki fiolet (synthwave shadow)
+    secondary: "#6A4F80",     // pastelowo-fioletowy
+  },
+  action: {
+    hover: "rgba(255, 119, 198, 0.12)", // neon pink glow
+  },
+};
+
+
+
+
+
+
+
+export const getTheme = (mode: PaletteMode) => {
+  // używamy StrictPalette, ale createTheme przyjmie go jako PaletteOptions
+  const palette: StrictPalette = mode === "dark" ? DARK_PALETTE : LIGHT_PALETTE;
+
+  // bezpieczny kontrast (możesz też użyć palette.primary.contrastText jeśli go ustalisz)
+  const contrast = palette.mode === "dark" ? (palette.primary.contrastText ?? "#ffffff") : (palette.primary.contrastText ?? "#000000");
+
+  const theme = createTheme({
+    palette,
+    typography: {
+      fontFamily: "Inter, sans-serif",
+      h1: { fontFamily: "Poppins, Inter, sans-serif" },
+      h2: { fontFamily: "Poppins, Inter, sans-serif" },
+      h3: { fontFamily: "Poppins, Inter, sans-serif" },
+      button: { textTransform: "none" },
+    },
+    components: {
+      MuiCssBaseline: {
+        styleOverrides: {
+          body: {
+            backgroundColor: palette.background.default,
+            color: palette.text.primary,
+            fontFamily: "Inter, sans-serif",
+          },
         },
       },
-    },
 
-    // AppBar: gradient tła
-    MuiAppBar: {
-      styleOverrides: {
-        colorDefault: {
-          background: ACCENT_GRADIENT,
-          color: "#fff",
-        },
-      },
-    },
-
-    // Buttons primary - gradient background
-    MuiButton: {
-      styleOverrides: {
-        containedPrimary: {
-          background: ACCENT_GRADIENT,
-          color: "#fff",
-          boxShadow: "none",
-          "&:hover": {
-            filter: "brightness(0.92)",
+      MuiAppBar: {
+        styleOverrides: {
+          root: {
+            background: `linear-gradient(135deg, ${palette.secondary.main} 0%, ${palette.primary.main} 100%)`,
+            color: contrast,
             boxShadow: "none",
-          },
-        },
-      },
-    },
-
-    // SVG ICON - domyślny kolor akcentu (używają go komponenty MUI)
-    MuiSvgIcon: {
-      styleOverrides: {
-        root: {
-          color: ACCENT_TO,
-        },
-      },
-    },
-
-    // Sidebar / ListItemButton - selected/hover states
-    MuiListItemButton: {
-      styleOverrides: {
-        root: {
-          transition: "background 200ms ease, color 200ms ease",
-
-          "&.Mui-selected": {
-            background: ACCENT_GRADIENT,
-            color: "#fff",
-            "& .MuiListItemIcon-root": {
-              color: "#fff !important",
+            "& .MuiToolbar-root, & .MuiTypography-root, & .MuiSvgIcon-root, & .MuiButton-root": {
+              color: "inherit",
             },
-            "& .MuiListItemText-primary": {
-              color: "#fff !important",
+            "& .MuiSvgIcon-root, & .MuiButton-root, & .MuiTypography-root": {
+              color: `${contrast} !important`,
             },
           },
+        },
+      },
 
-          "&:hover": {
-            background:
-              "linear-gradient(135deg, rgba(255,196,120,0.12), rgba(255,68,140,0.08))",
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            fontWeight: 600,
+            borderRadius: 10,
+          },
+          containedPrimary: {
+            backgroundColor: palette.primary.main,
+            color: contrast,
+            "&:hover": {
+              filter: "brightness(0.9)",
+              backgroundColor: palette.primary.main,
+            },
+          },
+        },
+      },
+
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            transition: "background 180ms ease, color 180ms ease",
+            "&.Mui-selected": {
+              backgroundColor: palette.primary.main,
+              color: contrast,
+              "& .MuiListItemText-primary": {
+                color: `${contrast} !important`,
+              },
+              "& .MuiListItemIcon-root": {
+                color: `${contrast} !important`,
+              },
+              "& .MuiSvgIcon-root": {
+                color: `${contrast} !important`,
+              },
+            },
+            "&:hover": {
+              backgroundColor: palette.action?.hover,
+            },
+          },
+        },
+      },
+
+      MuiListItemIcon: {
+        styleOverrides: {
+          root: {
+            minWidth: 40,
+            color: palette.primary.main,
+            transition: "color .18s ease",
+            ".MuiListItemButton-root:hover &": {
+              color: palette.primary.main,
+            },
+            ".MuiListItemButton-root.Mui-selected &": {
+              color: `${contrast} !important`,
+            },
+            ".Mui-selected &": {
+              color: `${contrast} !important`,
+            },
+          },
+        },
+      },
+
+      MuiSvgIcon: {
+        styleOverrides: {
+          root: {
+            color: "inherit",
           },
         },
       },
     },
+  });
 
-    // ListItemIcon - globalny wygląd ikon w listach/sidebarze
-    MuiListItemIcon: {
-      styleOverrides: {
-        root: {
-          color: ACCENT_TO,
-          minWidth: 40,
-          transition: "color 200ms ease",
+  return theme;
+};
 
-          // ikona zmienia kolor przy hover elementu listy
-          ".MuiListItemButton-root:hover &": {
-            color: ACCENT_FROM,
-          },
-
-          // ikona gdy element jest wybrany — biała
-          ".Mui-selected &": {
-            color: "#fff",
-          },
-        },
-      },
-    },
-
-    // Avatar - delikatne obramowanie akcentowe
-    MuiAvatar: {
-      styleOverrides: {
-        root: {
-          border: `2px solid ${ACCENT_FROM}`,
-        },
-      },
-    },
-  },
-});
-
-export default theme;
+export default getTheme;
