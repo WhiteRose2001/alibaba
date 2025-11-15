@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
+import { Snackbar } from '@mui/material';
 
 type Props = {
   open: boolean;
@@ -22,6 +23,7 @@ export default function UploadDialog({
   const fileRef = React.useRef<HTMLInputElement | null>(null);
   const [desc, setDesc] = React.useState('');
 
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Upload file</DialogTitle>
@@ -40,6 +42,11 @@ export default function UploadDialog({
         <Button
           onClick={() => {
             const file = fileRef.current?.files?.[0] || null;
+            if (!file) {
+              setSnackbarOpen(true);
+              return;
+            }
+
             handleUpload(file, currentUserId);
             onClose();
           }}
@@ -48,6 +55,12 @@ export default function UploadDialog({
           Upload
         </Button>
       </DialogActions>
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setSnackbarOpen(false)}
+        message={'❌ File not found'}
+      />
     </Dialog>
   );
 }

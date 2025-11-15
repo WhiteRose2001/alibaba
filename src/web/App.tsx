@@ -29,7 +29,7 @@ export default function App({
     fetchFiles,
     loginStatus,
   } = useAuth();
-  const { handleDelete } = useDeleteFile(fetchFiles);
+  const { handleDelete, deleteStatus } = useDeleteFile(fetchFiles);
   const { file, uploadStatus, isUploading, handleUpload } =
     useUploadFile(fetchFiles);
 
@@ -90,6 +90,7 @@ export default function App({
                 file={file}
                 isUploading={isUploading}
                 uploadStatus={uploadStatus}
+                deleteStatus={deleteStatus}
                 handleDelete={handleDelete}
                 handleUpload={handleUpload}
                 // jeśli Home potrzebuje uploaderAdapter, można go tu wygenerować i przekazać

@@ -19,6 +19,7 @@ export interface HomeProps {
   file: File | null;
   isUploading: boolean;
   uploadStatus: string | null;
+  deleteStatus: string | null;
   handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
   handleDelete: (
     e: React.MouseEvent<HTMLButtonElement>,
@@ -32,6 +33,7 @@ export default function Home({
   // file,
   // isUploading,
   uploadStatus,
+  deleteStatus,
   handleUpload,
   handleDelete,
 }: HomeProps) {
