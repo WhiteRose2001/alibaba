@@ -4,8 +4,7 @@ import storageDir from './storageDir.js';
 const storage = multer.diskStorage({
   destination: storageDir,
   filename: (_req, file, cb) => {
-    const unique = Date.now() + '-' + file.originalname;
-    cb(null, unique);
+    cb(null, file.originalname);
   },
 });
 

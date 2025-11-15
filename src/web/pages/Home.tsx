@@ -1,7 +1,17 @@
-import { Box, Stack, Typography, Paper, Button, Chip } from '@mui/material';
+import {
+  Box,
+  Stack,
+  Typography,
+  Paper,
+  Button,
+  Chip,
+  Snackbar,
+} from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import FolderIcon from '@mui/icons-material/Folder';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
+import UploadDialog from '../components/UploadDialog';
+import { useEffect, useState } from 'react';
 
 export interface HomeProps {
   currentUserId: number;
@@ -9,24 +19,36 @@ export interface HomeProps {
   file: File | null;
   isUploading: boolean;
   uploadStatus: string | null;
-  handleDelete: (e: React.MouseEvent<HTMLButtonElement>, fileName: string) => Promise<void> | void;
+  handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
+  handleDelete: (
+    e: React.MouseEvent<HTMLButtonElement>,
+    fileName: string
+  ) => Promise<void> | void;
 }
 
 export default function Home({
   currentUserId,
   files,
-  file,
-  isUploading,
+  // file,
+  // isUploading,
   uploadStatus,
+  handleUpload,
   handleDelete,
 }: HomeProps) {
+  const [openUploadDialog, setOpenUploadDialog] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  useEffect(() => {
+    if (uploadStatus) setSnackbarOpen(true);
+  }, [uploadStatus]);
   return (
     <Box sx={{ pt: 3 }}>
       <Stack spacing={2}>
         <Typography variant="h4">Welcome to Files Manager</Typography>
 
         <Typography color="text.secondary">
-          This dashboard is a starter layout for managing and uploading files. Use the sidebar to navigate.
+          This dashboard is a starter layout for managing and uploading files.
+          Use the sidebar to navigate.
         </Typography>
 
         {/* --- Quick Actions --- */}
@@ -38,19 +60,22 @@ export default function Home({
               <Button
                 startIcon={<UploadFileIcon />}
                 variant="contained"
-                href="/upload"
+                onClick={() => setOpenUploadDialog(true)}
+                // href="/upload"
               >
                 Upload file
               </Button>
 
-              <Button
-                startIcon={<FolderIcon />}
-                variant="outlined"
-                disabled
-              >
+              <Button startIcon={<FolderIcon />} variant="outlined" disabled>
                 Create folder (Coming soon)
               </Button>
             </Stack>
+            <UploadDialog
+              open={openUploadDialog}
+              handleUpload={handleUpload}
+              currentUserId={currentUserId}
+              onClose={() => setOpenUploadDialog(false)}
+            />
           </Paper>
 
           {/* --- Recent / uploaded files --- */}
@@ -98,16 +123,21 @@ export default function Home({
         </Stack>
 
         {/* --- Upload status info (optional) --- */}
-        {file && (
+        {/* {file && (
           <Typography sx={{ mt: 2 }}>
             Selected: <b>{file.name}</b>
           </Typography>
-        )}
+        )} */}
 
-        {isUploading && <Typography>Uploading...</Typography>}
+        {/* {isUploading && <Typography>Uploading...</Typography>} */}
 
         {uploadStatus && (
-          <Typography color="success.main">{uploadStatus}</Typography>
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={2000}
+            onClose={() => setSnackbarOpen(false)}
+            message={uploadStatus}
+          />
         )}
       </Stack>
     </Box>

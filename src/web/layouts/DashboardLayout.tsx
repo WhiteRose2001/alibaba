@@ -32,7 +32,7 @@ export default function DashboardLayout(props: {
     e: React.MouseEvent<HTMLButtonElement>,
     fileId: string
   ) => Promise<void> | void;
-  loginStatus?: string;
+  isLoggedIn: boolean;
   toggleColorMode?: () => void;
   handleLogin: (username: string, password: string) => void;
 }) {
@@ -46,7 +46,8 @@ export default function DashboardLayout(props: {
     // uploadStatus,
     // handleUpload,
     // handleDelete,
-    // loginStatus,
+    handleLogin,
+    isLoggedIn,
   } = props;
 
   const navigate = useNavigate();
@@ -95,11 +96,13 @@ export default function DashboardLayout(props: {
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <TopBar
         onUploadClick={() => navigate('/upload')}
+        handleLogin={handleLogin}
         onToggleTheme={() => props.toggleColorMode?.()}
         isDark={false}
         onNavigate={(to: string) => navigate(to)}
         collapsed={collapsed}
         setCollapsed={setCollapsed}
+        isLoggedIn={isLoggedIn}
       />
 
       {/* ASIDE: sidebar jako kolumna (branding + lista + footer) */}

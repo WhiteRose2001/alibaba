@@ -32,7 +32,8 @@ export const useUploadFile = (
 
       if (result.success) {
         setUploadStatus(
-          `✅ Uploaded: ${result.data.params.fileUrl || 'no URL returned'}`
+          // `✅ Uploaded: ${result.data.params.fileUrl || 'no URL returned'}`
+          `${result.data.message}`
         );
         fetchFiles();
       } else {

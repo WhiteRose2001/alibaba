@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import LoginPage from './pages/LoginPage'; // zakładam, że masz
@@ -14,6 +14,7 @@ import SettingsPage from './pages/SettingsPage';
 import { useAuth } from './hooks/useAuth';
 import { useUploadFile } from './hooks/useUploadFile';
 import { useDeleteFile } from './hooks/useDeleteFile';
+import RegisterPage from './pages/RegisterPage';
 
 export default function App({
   toggleColorMode,
@@ -23,10 +24,10 @@ export default function App({
   const {
     currentUserId,
     isLoggedIn,
-    loginStatus,
     handleLogin,
     files,
     fetchFiles,
+    loginStatus,
   } = useAuth();
   const { handleDelete } = useDeleteFile(fetchFiles);
   const { file, uploadStatus, isUploading, handleUpload } =
@@ -34,74 +35,85 @@ export default function App({
 
   const [collapsed, setCollapsed] = React.useState(false);
 
-  console.log('!!!!!!!!!!!!!, ', isLoggedIn);
-
   useEffect(() => {
     if (isLoggedIn) {
       fetchFiles();
     }
   }, [isLoggedIn, fetchFiles]);
 
+  console.log(isLoggedIn);
+
   return (
     <Routes>
       <Route
-        path="/login"
+        path="/"
         element={
-          <LoginPage handleLogin={handleLogin} isLoggedIn={isLoggedIn} />
-        }
-      />
-
-      <Route
-        path="/*"
-        element={
-          <DashboardLayout
-            collapsed={collapsed}
-            setCollapsed={setCollapsed}
-            currentUserId={currentUserId}
-            files={files}
-            file={file}
-            isUploading={isUploading}
-            uploadStatus={uploadStatus}
-            // handleUpload={handleUpload}
-            handleDelete={handleDelete}
-            loginStatus={loginStatus}
-            toggleColorMode={toggleColorMode}
+          <LoginPage
             handleLogin={handleLogin}
+            isLoggedIn={isLoggedIn}
+            loginStatus={loginStatus}
           />
         }
-      >
-        {/* nested routes rendered into Outlet w DashboardLayout */}
+      />
+      <Route
+        path="/register"
+        element={<RegisterPage handleLogin={handleLogin} />}
+      />
+
+      {isLoggedIn && (
         <Route
-          index
+          path="/"
           element={
-            <Home
+            <DashboardLayout
+              collapsed={collapsed}
+              setCollapsed={setCollapsed}
               currentUserId={currentUserId}
               files={files}
               file={file}
               isUploading={isUploading}
               uploadStatus={uploadStatus}
+              // handleUpload={handleUpload}
               handleDelete={handleDelete}
-              // jeśli Home potrzebuje uploaderAdapter, można go tu wygenerować i przekazać
+              isLoggedIn={isLoggedIn}
+              toggleColorMode={toggleColorMode}
+              handleLogin={handleLogin}
             />
           }
-        />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route
-          path="upload"
-          element={
-            <UploadPage
-              currentUserId={currentUserId}
-              handleUpload={handleUpload}
-            />
-          }
-        />
-        <Route
-          path="files"
-          element={<FilesPage files={files} fetchFiles={fetchFiles} />}
-        />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Route>
+        >
+          {/* nested routes rendered into Outlet w DashboardLayout */}
+          <Route
+            index
+            element={
+              <Home
+                currentUserId={currentUserId}
+                files={files}
+                file={file}
+                isUploading={isUploading}
+                uploadStatus={uploadStatus}
+                handleDelete={handleDelete}
+                handleUpload={handleUpload}
+                // jeśli Home potrzebuje uploaderAdapter, można go tu wygenerować i przekazać
+              />
+            }
+          />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route
+            path="upload"
+            element={
+              <UploadPage
+                currentUserId={currentUserId}
+                handleUpload={handleUpload}
+              />
+            }
+          />
+          <Route
+            path="files"
+            element={<FilesPage files={files} fetchFiles={fetchFiles} />}
+          />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Route>
+      )}
     </Routes>
   );
 }

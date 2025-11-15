@@ -6,7 +6,11 @@ interface UseAuthResult {
   isLoggedIn: boolean;
   loginStatus: string;
   files: string[];
-  handleLogin: (username: string, password: string) => Promise<void>;
+  handleLogin: (
+    username: string,
+    password: string,
+    isRegister?: boolean
+  ) => Promise<void>;
   fetchFiles: () => Promise<void>;
 }
 
@@ -35,7 +39,10 @@ export const useAuth = (): UseAuthResult => {
 
   const checkSession = useCallback(async () => {
     try {
-      const res = await callServer({ mode: 'CHECK_USER_SESSION', method: 'GET' });
+      const res = await callServer({
+        mode: 'CHECK_USER_SESSION',
+        method: 'GET',
+      });
       const userId = res.data?.userId;
 
       if (userId && res.success) {
@@ -53,70 +60,67 @@ export const useAuth = (): UseAuthResult => {
     }
   }, []);
 
-  const handleLogin = useCallback(async (username: string, password: string) => {
-    if (isLoggedIn) {
-      // Logout
-      await callServer({ mode: 'LOGOUT_USER', method: 'GET' });
-      setIsLoggedIn(false);
-      setCurrentUserId(0);
-      setLoginStatus('✅ Logged out.');
-      setFiles([]);
-      return;
-    }
+  const handleLogin = useCallback(
+    async (username: string, password: string, isRegister?: boolean) => {
+      if (isLoggedIn) {
+        // Logout
+        await callServer({ mode: 'LOGOUT_USER', method: 'GET' });
+        setIsLoggedIn(false);
+        setCurrentUserId(0);
+        setLoginStatus('✅ Logged out.');
+        setFiles([]);
+        return;
+      }
 
-    if (!username || !password) return;
+      if (!username || !password) return;
 
-    setLoginStatus('Logging in...');
+      setLoginStatus('Logging in...');
 
-    try {
-      // Check if user exists
-      const userCheck = await callServer({
-        mode: 'GET_USER',
-        method: 'POST',
-        login: username,
-      });
+      try {
+        // Check if user exists
+        const userCheck = await callServer({
+          mode: 'GET_USER',
+          method: 'POST',
+          login: username,
+        });
 
-      const userNotFound = !userCheck.success || userCheck.data?.length === 0;
+        const userNotFound = !userCheck.success || userCheck.data?.length === 0;
 
-      if (userNotFound) {
-        const shouldCreate = window.confirm(
-          `User "${username}" does not exist.\nDo you want to create a new account?`,
-        );
-
-        if (!shouldCreate) {
-          setLoginStatus('❌ Login cancelled.');
-          return;
+        if (userNotFound && isRegister) {
+          setLoginStatus('Creating user...');
+          await callServer({
+            mode: 'ADD_USER',
+            method: 'POST',
+            login: username,
+            password,
+          });
         }
 
-        setLoginStatus('Creating user...');
-        await callServer({
-          mode: 'ADD_USER',
+        // Login
+        const loginRes = await callServer({
+          mode: 'LOGIN_USER',
           method: 'POST',
           login: username,
           password,
         });
-      }
 
-      // Login
-      const loginRes = await callServer({
-        mode: 'LOGIN_USER',
-        method: 'POST',
-        login: username,
-        password,
-      });
-
-      if (loginRes.success) {
-        setIsLoggedIn(true);
-        setCurrentUserId(loginRes.data.userId);
-        setLoginStatus('✅ Logged in.');
-      } else {
-        setLoginStatus('❌ Login failed.' + (loginRes.status === 401 ? ' Incorrect credentials.' : ''));
+        if (loginRes.success) {
+          setIsLoggedIn(true);
+          setCurrentUserId(loginRes.data.userId);
+          setLoginStatus('✅ Logged in.');
+        } else {
+          setLoginStatus(
+            '❌ Login failed.' +
+              (loginRes.status === 401 ? ' Incorrect credentials.' : '')
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        setLoginStatus('❌ Unexpected error');
       }
-    } catch (err) {
-      console.error(err);
-      setLoginStatus('❌ Unexpected error');
-    }
-  }, [isLoggedIn]);
+    },
+    [isLoggedIn]
+  );
 
   useEffect(() => {
     checkSession();

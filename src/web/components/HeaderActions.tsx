@@ -1,6 +1,14 @@
 // HeaderActions.tsx
 import React from 'react';
-import { Button, IconButton, Avatar, Menu, MenuItem, Tooltip, Box } from '@mui/material';
+import {
+  Button,
+  IconButton,
+  Avatar,
+  Menu,
+  MenuItem,
+  Tooltip,
+  Box,
+} from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -10,7 +18,7 @@ type Props = {
   onUploadClick?: () => void;
   onToggleTheme?: () => void;
   isDark?: boolean;
-  onLogout?: () => void;
+
   userName?: string;
 };
 
@@ -19,13 +27,13 @@ export default function HeaderActions({
   onUploadClick,
   onToggleTheme,
   isDark = false,
-  onLogout,
   userName = 'JD',
 }: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
-  const handleOpenMenu = (e: React.MouseEvent<HTMLElement>) => setAnchorEl(e.currentTarget);
+  const handleOpenMenu = (e: React.MouseEvent<HTMLElement>) =>
+    setAnchorEl(e.currentTarget);
   const handleCloseMenu = () => setAnchorEl(null);
 
   return (
@@ -59,7 +67,13 @@ export default function HeaderActions({
       {/* Avatar + menu */}
       <Tooltip title="Account">
         <IconButton onClick={handleOpenMenu} size="small" sx={{ ml: 1 }}>
-          <Avatar>{userName.split(' ').map(n => n[0]).join('').slice(0, 2)}</Avatar>
+          <Avatar>
+            {userName
+              .split(' ')
+              .map((n) => n[0])
+              .join('')
+              .slice(0, 2)}
+          </Avatar>
         </IconButton>
       </Tooltip>
 
@@ -89,7 +103,7 @@ export default function HeaderActions({
         <MenuItem
           onClick={() => {
             handleCloseMenu();
-            onLogout?.();
+            // onLogout?.();
           }}
         >
           Logout

@@ -1,5 +1,5 @@
 // src/pages/LoginPage.tsx  (albo src/components/LoginPage.tsx — tam gdzie masz plik)
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -14,10 +14,12 @@ import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import logo from '../assets/turban2.png';
+import { Snackbar } from '@mui/material';
 
 export type LoginPageProps = {
   handleLogin: (username: string, password: string) => Promise<void> | void;
   isLoggedIn: boolean;
+  loginStatus: string | null;
   // <-- dodane pole, opcjonalne
   onContinueAsGuest?: () => void;
 };
@@ -25,21 +27,18 @@ export type LoginPageProps = {
 export default function LoginPage({
   handleLogin,
   isLoggedIn,
+  loginStatus,
   onContinueAsGuest,
 }: LoginPageProps) {
   const loginInputRef = useRef<HTMLInputElement | null>(null);
   const passwordInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
 
-  const onLogin = async (e?: React.SyntheticEvent) => {
-    e?.preventDefault();
+  const onLogin = async (e: React.FormEvent) => {
+    e.preventDefault(); // zatrzymuje domyślne submitowanie formularza
     const username = loginInputRef.current?.value || '';
     const password = passwordInputRef.current?.value || '';
     await handleLogin(username, password);
-  };
-
-  const onLogout = () => {
-    handleLogin('', '');
   };
 
   const continueToDashboard = () => {
@@ -50,6 +49,12 @@ export default function LoginPage({
     // zawsze nawiguj do /
     navigate('/');
   };
+
+  //TODO: Ogarnąć komunikaty - powtarzają się bez sensu
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  useEffect(() => {
+    setSnackbarOpen(true);
+  }, [loginStatus]);
 
   return (
     <Box
@@ -111,10 +116,7 @@ export default function LoginPage({
                   mt: 1,
                 }}
               >
-                <FormControlLabel
-                  control={<Checkbox defaultChecked />}
-                  label="Remember me"
-                />
+                <FormControlLabel control={<Checkbox />} label="Remember me" />
                 <Link
                   component="button"
                   variant="body2"
@@ -140,16 +142,14 @@ export default function LoginPage({
                   fullWidth
                   onClick={continueToDashboard}
                 >
-                  Continue to dashboard
+                  {/* Continue to dashboard */}
+                  Ogarnij sobie baze
                 </Button>
               </Box>
 
               <Typography variant="body2" color="text.secondary" sx={{ mt: 2 }}>
                 Don't have an account?{' '}
-                <Link
-                  component="button"
-                  onClick={() => alert('Register not implemented')}
-                >
+                <Link component="button" onClick={() => navigate('/register')}>
                   Register
                 </Link>
               </Typography>
@@ -162,19 +162,18 @@ export default function LoginPage({
               <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                 Click below to logout (this calls your `handleLogin('', '')`).
               </Typography>
-
-              <Box sx={{ display: 'flex', gap: 1, justifyContent: 'center' }}>
-                <Button variant="contained" onClick={onLogout}>
-                  Logout
-                </Button>
-                <Button variant="outlined" onClick={continueToDashboard}>
-                  Continue to dashboard
-                </Button>
-              </Box>
             </Box>
           )}
         </CardContent>
       </Card>
+      {loginStatus && (
+        <Snackbar
+          open={snackbarOpen}
+          autoHideDuration={2000}
+          onClose={() => setSnackbarOpen(false)}
+          message={loginStatus}
+        />
+      )}
     </Box>
   );
 }

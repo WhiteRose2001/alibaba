@@ -13,8 +13,18 @@ export const NAVIGATION: NavItem[] = [
   { kind: 'page', segment: '/', title: 'Dashboard', icon: <DashboardIcon /> },
   { kind: 'header', title: 'Files' },
   { kind: 'page', segment: '/files', title: 'Files', icon: <FolderIcon /> },
-  { kind: 'page', segment: '/upload', title: 'Upload', icon: <UploadFileIcon /> },
+  {
+    kind: 'page',
+    segment: '/upload',
+    title: 'Upload',
+    icon: <UploadFileIcon />,
+  },
   { kind: 'divider' },
   { kind: 'header', title: 'Administration' },
-  { kind: 'page', segment: '/settings', title: 'Settings', icon: <SettingsIcon /> },
+  {
+    kind: 'page',
+    segment: '/settings',
+    title: 'Settings',
+    icon: <SettingsIcon />,
+  },
 ];

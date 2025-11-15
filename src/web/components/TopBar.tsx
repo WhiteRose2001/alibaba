@@ -22,7 +22,9 @@ type Props = {
   isDark?: boolean;
   onNavigate?: (to: string) => void;
   collapsed: boolean;
+  isLoggedIn: boolean;
   setCollapsed: (v: boolean) => void;
+  handleLogin: (username: string, password: string) => void;
 };
 
 export default function TopBar({
@@ -31,6 +33,8 @@ export default function TopBar({
   isDark = false,
   onNavigate,
   collapsed,
+  isLoggedIn,
+  handleLogin,
   setCollapsed,
 }: Props) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -39,6 +43,10 @@ export default function TopBar({
 
   const SIDEBAR_EXPANDED = 240;
   const SIDEBAR_COLLAPSED = 72;
+
+  const onLogout = () => {
+    handleLogin('', '');
+  };
 
   return (
     <AppBar
@@ -128,7 +136,17 @@ export default function TopBar({
               Settings
             </MenuItem>
 
-            <MenuItem onClick={() => setAnchorEl(null)}>Logout</MenuItem>
+            <MenuItem
+              onClick={() => {
+                setAnchorEl(null);
+                // onNavigate?.('/');
+                console.log('Przed: ', isLoggedIn);
+                onLogout();
+                console.log('Po: ', isLoggedIn);
+              }}
+            >
+              Logout
+            </MenuItem>
           </Menu>
         </Box>
       </Toolbar>
