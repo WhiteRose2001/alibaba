@@ -1,22 +1,21 @@
 // src/web/components/TopBar.tsx
-import React from "react";
-import { alpha } from "@mui/material/styles";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Tooltip from "@mui/material/Tooltip";
-import UploadFileIcon from "@mui/icons-material/UploadFile";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import Typography from "@mui/material/Typography";
-
+import React from 'react';
+import { alpha } from '@mui/material/styles';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import Tooltip from '@mui/material/Tooltip';
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import Typography from '@mui/material/Typography';
 
 type Props = {
   onUploadClick?: () => void;
@@ -27,7 +26,7 @@ type Props = {
   setCollapsed: (v: boolean) => void;
 };
 
-const logo = "/logo192.png";
+const logo = '/logo192.png';
 
 export default function TopBar({
   onUploadClick,
@@ -44,10 +43,13 @@ export default function TopBar({
   const SIDEBAR_EXPANDED = 240;
   const SIDEBAR_COLLAPSED = 72;
 
-  const accentFrom = "#ffac47";
-  const accentTo = "#ff448c";
+  const accentFrom = '#ffac47';
+  const accentTo = '#ff448c';
   const accentGradient = `linear-gradient(135deg, ${accentFrom} 0%, ${accentTo} 100%)`;
-  const hoverGradient = `linear-gradient(135deg, ${alpha(accentFrom, 0.12)}, ${alpha(accentTo, 0.08)})`;
+  const hoverGradient = `linear-gradient(135deg, ${alpha(
+    accentFrom,
+    0.12
+  )}, ${alpha(accentTo, 0.08)})`;
 
   return (
     <AppBar
@@ -57,13 +59,13 @@ export default function TopBar({
       sx={(theme) => ({
         zIndex: theme.zIndex.drawer + 1,
         ml: collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_EXPANDED,
-        width: `calc(100% - ${collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_EXPANDED
-          }px)`,
-        transition: "margin-left 180ms ease, width 180ms ease",
+        width: `calc(100% - ${
+          collapsed ? SIDEBAR_COLLAPSED : SIDEBAR_EXPANDED
+        }px)`,
+        transition: 'margin-left 180ms ease, width 180ms ease',
       })}
     >
       <Toolbar>
-
         {/* Toggle sidebar */}
         <IconButton
           color="inherit"
@@ -76,10 +78,10 @@ export default function TopBar({
         {/* Logo + Title */}
         <Box
           sx={{
-            display: "flex",
-            alignItems: "center",
+            display: 'flex',
+            alignItems: 'center',
             gap: 1,
-            height: "100%",          // klucz
+            height: '100%', // klucz
           }}
         >
           <Typography variant="h6" sx={{ lineHeight: 1 }}>
@@ -87,8 +89,7 @@ export default function TopBar({
           </Typography>
         </Box>
 
-
-        <Box sx={{ ml: "auto", display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
           <Button
             variant="contained"
             startIcon={<UploadFileIcon />}
@@ -96,11 +97,11 @@ export default function TopBar({
             onClick={onUploadClick}
             sx={{
               background: accentGradient,
-              color: "#fff",
-              boxShadow: "none",
-              "&:hover": {
+              color: '#fff',
+              boxShadow: 'none',
+              '&:hover': {
                 background: hoverGradient,
-                boxShadow: "none",
+                boxShadow: 'none',
               },
             }}
           >
@@ -130,13 +131,13 @@ export default function TopBar({
             anchorEl={anchorEl}
             open={open}
             onClose={() => setAnchorEl(null)}
-            anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-            transformOrigin={{ vertical: "top", horizontal: "right" }}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                onNavigate?.("/profile");
+                onNavigate?.('/profile');
               }}
             >
               Profile
@@ -145,7 +146,7 @@ export default function TopBar({
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                onNavigate?.("/settings");
+                onNavigate?.('/settings');
               }}
             >
               Settings

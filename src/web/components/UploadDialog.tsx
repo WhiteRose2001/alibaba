@@ -6,28 +6,47 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-type Props = { open: boolean; onClose: () => void; onUpload?: (file: File | null) => void };
+type Props = {
+  open: boolean;
+  onClose: () => void;
+  handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
+  currentUserId: number;
+};
 
-export default function UploadDialog({ open, onClose, onUpload }: Props) {
+export default function UploadDialog({
+  open,
+  onClose,
+  currentUserId,
+  handleUpload,
+}: Props) {
   const fileRef = React.useRef<HTMLInputElement | null>(null);
   const [desc, setDesc] = React.useState('');
-
-  const handleUpload = () => {
-    const file = fileRef.current?.files?.[0] ?? null;
-    onUpload?.(file);
-    onClose();
-  };
 
   return (
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>Upload file</DialogTitle>
       <DialogContent>
         <input ref={fileRef} type="file" />
-        <TextField margin="dense" label="Description" fullWidth value={desc} onChange={(e) => setDesc(e.target.value)} />
+        <TextField
+          margin="dense"
+          label="Description"
+          fullWidth
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleUpload} variant="contained">Upload</Button>
+        <Button
+          onClick={() => {
+            const file = fileRef.current?.files?.[0] || null;
+            handleUpload(file, currentUserId);
+            onClose();
+          }}
+          variant="contained"
+        >
+          Upload
+        </Button>
       </DialogActions>
     </Dialog>
   );

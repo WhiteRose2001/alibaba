@@ -1,46 +1,21 @@
-import React, { ChangeEvent } from 'react';
+import React from 'react';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import UploadDialog from '../components/UploadDialog';
-
-type FileHandler = (f: File) => void;
-type InputEventHandler = (event: ChangeEvent<HTMLInputElement>, userId: number) => Promise<void> | void;
-type MaybeUploadHandler = FileHandler | InputEventHandler;
+import { useNavigate } from 'react-router-dom';
 
 export interface UploadPageProps {
   currentUserId: number;
-  handleUpload: MaybeUploadHandler;
+  handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
 }
 
-export default function UploadPage({ currentUserId, handleUpload }: UploadPageProps) {
+export default function UploadPage({
+  currentUserId,
+  handleUpload,
+}: UploadPageProps) {
+  const navigate = useNavigate();
   const [open, setOpen] = React.useState(true); // open by default as page
-
-  // Adapter: UploadDialog gives us a File; handleUpload might expect File OR (event, userId)
-  const onUploadFromDialog = async (file: File) => {
-    if (!handleUpload) return;
-
-    // jeśli handleUpload to funkcja jednoargumentowa, traktujemy ją jako FileHandler
-    if ((handleUpload as Function).length === 1) {
-      try {
-        (handleUpload as FileHandler)(file);
-      } catch (err) {
-        console.error('upload error', err);
-      }
-      return;
-    }
-
-    // w przeciwnym razie zakładamy starszy interfejs (event, userId)
-    const fakeEvent = { target: { files: [file] } } as unknown as ChangeEvent<HTMLInputElement>;
-    try {
-      const maybePromise = (handleUpload as InputEventHandler)(fakeEvent, currentUserId);
-      if (maybePromise && typeof (maybePromise as Promise<void>).then === 'function') {
-        await maybePromise;
-      }
-    } catch (err) {
-      console.error('upload error', err);
-    }
-  };
 
   return (
     <Box>
@@ -53,8 +28,13 @@ export default function UploadPage({ currentUserId, handleUpload }: UploadPagePr
 
         {/* UploadDialog powinien wywołać onUpload(file: File) */}
         <UploadDialog
+          handleUpload={handleUpload}
+          currentUserId={currentUserId}
           open={open}
-          onClose={() => setOpen(false)}
+          onClose={() => {
+            setOpen(false);
+            navigate('/files');
+          }}
         />
       </Paper>
     </Box>
