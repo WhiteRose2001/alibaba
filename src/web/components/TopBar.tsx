@@ -82,7 +82,7 @@ export default function TopBar({
           }}
         >
           <Typography variant="h6" sx={{ lineHeight: 1 }}>
-            alibaba-fiesta
+            alibaba
           </Typography>
         </Box>
 
