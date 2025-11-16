@@ -25,11 +25,16 @@ import logoutUser from './routes/users/logoutUser.js';
 import meUser from './routes/users/meUser.js';
 
 dotenv.config();
-
+if (!process.env.SESSION_SECRET) {
+  console.error('❌ Error: SESSION_SECRET is missing in your environment variables. Possibly .env file missing.');
+  process.exit(1);
+}
 //TODO: delete metadata
 
 const app = express();
 const PORT = process.env.PORT || 8081;
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const isProd = NODE_ENV === 'production';
 
 const allowedOrigins = [
   'https://localhost:5173',
@@ -65,7 +70,7 @@ app.use(
 app.use(cookieParser());
 
 // // SERVE STATIC FILES -- possibility to enable in future
-// if (process.env.NODE_ENV === 'production') {
+// if (NODE_ENV === 'production') {
 //   const staticPath = path.join(__dirname, '../../');
 
 //   console.log('[DEBUG] Static path:', staticPath);
@@ -81,22 +86,20 @@ app.use(cookieParser());
 //     },
 //   }));
 
-//   //index.html without cahce
+//   //index.html
 //   app.get('/', (req, res) => {
-//     res.set('Cache-Control', 'no-store');
 //     res.sendFile(path.join(staticPath, 'index.html'));
 //   });
 
 //   // Catch-all route to serve index.html for all paths other than API requests (used by SPA in web React app)
 //   app.get('/*splat', (req, res, next) => {
 //     if (req.path.startsWith('/api')) return next(); // let API requests pass through
-//     res.set('Cache-Control', 'no-store');
 //     res.sendFile(path.join(staticPath, 'index.html'));
 //   });
 // }
 
 async function startServer() {
-  console.log(`[ENV] NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`[ENV] NODE_ENV: ${NODE_ENV}`);
   console.log(`[ENV] PORT: ${PORT}`);
 
   const { sessionStore } = await connectToDB();
@@ -123,19 +126,22 @@ async function startServer() {
   });
   // 404 handler
   app.use((req, res) => {
-    res.status(404).json({ message: 'Not Found' });
+    const defMessage = { message: 'Not Found' };
+    res.status(404).json(isProd ? defMessage : { ...defMessage, requestedUrl: req.originalUrl, params: req.params, query: req.query });
   });
 
   if (
-    process.env.NODE_ENV !== 'production' &&
-    (!fs.existsSync(`${CERTS_DIR}${CERT_FILE}`) ||
-      !fs.existsSync(`${CERTS_DIR}${KEY_FILE}`))
+    !isProd &&
+  (
+    !fs.existsSync(`${CERTS_DIR}${CERT_FILE}`) ||
+    !fs.existsSync(`${CERTS_DIR}${KEY_FILE}`)
+  )
   ) {
     await checkForCerts(KEY_FILE, CERT_FILE);
   }
   // using 0.0.0.0 because server is behing reverse proxy (e.g. GCP App Engine)
   const server =
-    process.env.NODE_ENV === 'production'
+    isProd
       ? app.listen(Number(PORT), '0.0.0.0', () => {
         //   connectDB();
         console.log(`✅ Server running on port ${PORT}`);
