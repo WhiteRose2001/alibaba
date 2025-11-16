@@ -15,7 +15,10 @@ export const useUploadFile = (fetchFiles: () => Promise<void>): UseUploadFileRes
 
   const handleUpload = async (event: React.ChangeEvent<HTMLInputElement>, userId: number) => {
     const uploadedFile = event.target.files?.[0];
-    if (!uploadedFile) return;
+    if (!uploadedFile) {
+      setUploadStatus('❌ No file found');
+      return;
+    };
 
     setFile(uploadedFile);
     setIsUploading(true);
@@ -26,7 +29,7 @@ export const useUploadFile = (fetchFiles: () => Promise<void>): UseUploadFileRes
         mode: 'UPLOAD',
         method: 'POST',
         file: uploadedFile,
-        additionalData: { userId }, // maybe user auth?
+        additionalData: { userId },
       });
 
       if (result.success) {

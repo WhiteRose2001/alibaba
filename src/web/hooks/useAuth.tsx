@@ -64,7 +64,10 @@ export const useAuth = (): UseAuthResult => {
       return;
     }
 
-    if (!username || !password) return;
+    if (!username || !password) {
+      setLoginStatus('❌ Missing username or password.');
+      return;
+    }
 
     setLoginStatus('Logging in...');
 
