@@ -18,9 +18,9 @@ export default function FilesPage({
       <Typography variant="h4" gutterBottom>
         Files
       </Typography>
-      <div style={{ fontFamily: "Poppins", fontSize: 32 }}>
+      {/* <div style={{ fontFamily: "Poppins", fontSize: 32 }}>
   TEST POPPINS (INLINE)
-</div>
+</div> */}
 
       <Paper sx={{ p: 2 }}>
         <List>

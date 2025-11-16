@@ -143,7 +143,7 @@ export default function LoginPage({
                   onClick={continueToDashboard}
                 >
                   {/* Continue to dashboard */}
-                  Ogarnij sobie baze
+                  Continue to dashboard
                 </Button>
               </Box>
 
