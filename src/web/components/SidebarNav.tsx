@@ -1,7 +1,5 @@
-// src/web/components/SidebarNav.tsx
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { useTheme, alpha } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -78,9 +76,12 @@ function SidebarBrand({ collapsed }: { collapsed: boolean }) {
   );
 }
 
-export default function SidebarNav({ navigation, onNavigate, collapsed }: Props) {
+export default function SidebarNav({
+  navigation,
+  onNavigate,
+  collapsed,
+}: Props) {
   const location = useLocation();
-  const theme = useTheme();
 
   const SIDEBAR_EXPANDED = 240;
   const SIDEBAR_COLLAPSED = 72;
@@ -181,7 +182,7 @@ export default function SidebarNav({ navigation, onNavigate, collapsed }: Props)
         }}
       >
         {!collapsed && (
-          <Box sx={{ fontSize: 12, color: 'text.secondary' }}>v1.0</Box>
+          <Box sx={{ fontSize: 12, color: 'text.secondary' }}>v1.0.0</Box>
         )}
       </Box>
     </Box>

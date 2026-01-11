@@ -10,7 +10,7 @@ export type useDeleteFileResult = {
 };
 
 export const useDeleteFile = (
-  fetchFiles: () => Promise<void>
+  fetchFiles: () => Promise<void>,
 ): useDeleteFileResult => {
   const [deleteStatus, setDeleteStatus] = useState<string | null>(null);
   const handleDelete = useCallback(
@@ -25,7 +25,7 @@ export const useDeleteFile = (
         if (response.success) {
           setDeleteStatus(
             // `✅ Uploaded: ${result.data.params.fileUrl || 'no URL returned'}`
-            '✅ File deleted successfully'
+            '✅ File deleted successfully',
           );
 
           console.log(`File ${filename} deleted successfully`);
@@ -37,7 +37,7 @@ export const useDeleteFile = (
         console.error('Delete operation failed:', error);
       }
     },
-    [fetchFiles]
+    [fetchFiles],
   );
 
   return { handleDelete, deleteStatus };

@@ -1,4 +1,3 @@
-// src/main.tsx
 import '@fontsource/inter/400.css';
 import '@fontsource/inter/500.css';
 import '@fontsource/inter/600.css';
@@ -14,6 +13,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider } from '@mui/material/styles';
+import 'leaflet/dist/leaflet.css';
 
 import getTheme from './theme/theme';
 
@@ -27,7 +27,7 @@ function Main() {
       toggleColorMode: () =>
         setMode((prev) => (prev === 'light' ? 'dark' : 'light')),
     }),
-    []
+    [],
   );
 
   const theme = React.useMemo(() => getTheme(mode), [mode]);

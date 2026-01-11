@@ -1,8 +1,7 @@
-// src/App.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import LoginPage from './pages/LoginPage'; // zakładam, że masz
+import LoginPage from './pages/LoginPage';
 import DashboardLayout from './layouts/DashboardLayout';
 
 import Home from './pages/Home';
@@ -25,7 +24,7 @@ export default function App({
     currentUserId,
     isLoggedIn,
     handleLogin,
-    files,
+    filesState,
     fetchFiles,
     loginStatus,
   } = useAuth();
@@ -68,7 +67,7 @@ export default function App({
               collapsed={collapsed}
               setCollapsed={setCollapsed}
               currentUserId={currentUserId}
-              files={files}
+              files={filesState.files}
               file={file}
               isUploading={isUploading}
               uploadStatus={uploadStatus}
@@ -86,7 +85,7 @@ export default function App({
             element={
               <Home
                 currentUserId={currentUserId}
-                files={files}
+                files={filesState.files}
                 file={file}
                 isUploading={isUploading}
                 uploadStatus={uploadStatus}
@@ -109,7 +108,7 @@ export default function App({
           />
           <Route
             path="files"
-            element={<FilesPage files={files} fetchFiles={fetchFiles} />}
+            element={<FilesPage filesState={filesState} fetchFiles={fetchFiles} />}
           />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

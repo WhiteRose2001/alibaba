@@ -1,11 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { callServer } from '../../api/clients/callServer';
+import { FilesState } from './types/SensitiveMetadata';
 
 interface UseAuthResult {
   currentUserId: number;
   isLoggedIn: boolean;
   loginStatus: string;
-  files: string[];
+  filesState: FilesState;
   handleLogin: (
     username: string,
     password: string,
@@ -18,11 +19,14 @@ export const useAuth = (): UseAuthResult => {
   const [currentUserId, setCurrentUserId] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginStatus, setLoginStatus] = useState('');
-  const [files, setFiles] = useState<string[]>([]);
+  const [filesState, setFilesState] = useState<FilesState>({
+    files: [],
+    metadata: {},
+  });
 
   const fetchFiles = useCallback(async () => {
     if (!isLoggedIn) {
-      setFiles([]);
+      setFilesState({ files: [], metadata: {} });
       return;
     }
 
@@ -30,7 +34,8 @@ export const useAuth = (): UseAuthResult => {
       const response = await callServer({ mode: 'LIST_FILES', method: 'GET' });
       console.log(response);
       if (response.success && Array.isArray(response.data.params.files)) {
-        setFiles(response.data.params.files);
+        setFilesState({ files: response.data.params.files, metadata: response.data.params.metadata });
+
       }
     } catch (error) {
       console.error('Failed to fetch files:', error);
@@ -51,7 +56,7 @@ export const useAuth = (): UseAuthResult => {
       } else {
         setIsLoggedIn(false);
         setCurrentUserId(0);
-        setFiles([]);
+        setFilesState({ files: [], metadata: {} });
       }
     } catch (err) {
       console.error('Session check failed', err);
@@ -68,7 +73,7 @@ export const useAuth = (): UseAuthResult => {
         setIsLoggedIn(false);
         setCurrentUserId(0);
         setLoginStatus('✅ Logged out.');
-        setFiles([]);
+        setFilesState({ files: [], metadata: {} });
         return;
       }
 
@@ -111,7 +116,7 @@ export const useAuth = (): UseAuthResult => {
         } else {
           setLoginStatus(
             '❌ Login failed.' +
-              (loginRes.status === 401 ? ' Incorrect credentials.' : '')
+              (loginRes.status === 401 ? ' Incorrect credentials.' : ''),
           );
         }
       } catch (err) {
@@ -119,7 +124,7 @@ export const useAuth = (): UseAuthResult => {
         setLoginStatus('❌ Unexpected error');
       }
     },
-    [isLoggedIn]
+    [isLoggedIn],
   );
 
   useEffect(() => {
@@ -130,7 +135,7 @@ export const useAuth = (): UseAuthResult => {
     currentUserId,
     isLoggedIn,
     loginStatus,
-    files,
+    filesState,
     handleLogin,
     fetchFiles,
   };

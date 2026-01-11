@@ -19,6 +19,7 @@ uploadFile.post('/', fileStorage.single('file'), async (req, res) => {
   }
   const userId = req.body.userId;
   const filename = req.file.filename;
+
   const path = `${storageDir}/${filename}`;
   if (!userId || !filename) {
     fs.unlinkSync(path);
