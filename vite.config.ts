@@ -58,14 +58,14 @@ export default defineConfig(({ mode }) => {
     },
     server: isDev
       ? {
-        https: {
-          key: fs.readFileSync(path.join(CERTS_DIR, KEY_FILE)),
-          cert: fs.readFileSync(path.join(CERTS_DIR, CERT_FILE)),
-        },
-        host: 'localhost',
-        port: 5173,
-        strictPort: true,
-      }
+          https: {
+            key: fs.readFileSync(path.join(CERTS_DIR, KEY_FILE)),
+            cert: fs.readFileSync(path.join(CERTS_DIR, CERT_FILE)),
+          },
+          host: 'localhost',
+          port: 5173,
+          strictPort: true,
+        }
       : undefined,
   };
 });
