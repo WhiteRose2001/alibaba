@@ -1,12 +1,17 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { callServer } from '../../api/clients/callServer';
+import { FilesState } from './types/SensitiveMetadata';
 
 interface UseAuthResult {
   currentUserId: number;
   isLoggedIn: boolean;
   loginStatus: string;
-  files: string[];
-  handleLogin: (username: string, password: string) => Promise<void>;
+  filesState: FilesState;
+  handleLogin: (
+    username: string,
+    password: string,
+    isRegister?: boolean
+  ) => Promise<void>;
   fetchFiles: () => Promise<void>;
 }
 
@@ -14,11 +19,14 @@ export const useAuth = (): UseAuthResult => {
   const [currentUserId, setCurrentUserId] = useState(0);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loginStatus, setLoginStatus] = useState('');
-  const [files, setFiles] = useState<string[]>([]);
+  const [filesState, setFilesState] = useState<FilesState>({
+    files: [],
+    metadata: {},
+  });
 
   const fetchFiles = useCallback(async () => {
     if (!isLoggedIn) {
-      setFiles([]);
+      setFilesState({ files: [], metadata: {} });
       return;
     }
 
@@ -26,7 +34,10 @@ export const useAuth = (): UseAuthResult => {
       const response = await callServer({ mode: 'LIST_FILES', method: 'GET' });
       console.log(response);
       if (response.success && Array.isArray(response.data.params.files)) {
-        setFiles(response.data.params.files);
+        setFilesState({
+          files: response.data.params.files,
+          metadata: response.data.params.metadata,
+        });
       }
     } catch (error) {
       console.error('Failed to fetch files:', error);
@@ -35,7 +46,10 @@ export const useAuth = (): UseAuthResult => {
 
   const checkSession = useCallback(async () => {
     try {
-      const res = await callServer({ mode: 'CHECK_USER_SESSION', method: 'GET' });
+      const res = await callServer({
+        mode: 'CHECK_USER_SESSION',
+        method: 'GET',
+      });
       const userId = res.data?.userId;
 
       if (userId && res.success) {
@@ -44,7 +58,7 @@ export const useAuth = (): UseAuthResult => {
       } else {
         setIsLoggedIn(false);
         setCurrentUserId(0);
-        setFiles([]);
+        setFilesState({ files: [], metadata: {} });
       }
     } catch (err) {
       console.error('Session check failed', err);
@@ -53,73 +67,67 @@ export const useAuth = (): UseAuthResult => {
     }
   }, []);
 
-  const handleLogin = useCallback(async (username: string, password: string) => {
-    if (isLoggedIn) {
-      // Logout
-      await callServer({ mode: 'LOGOUT_USER', method: 'GET' });
-      setIsLoggedIn(false);
-      setCurrentUserId(0);
-      setLoginStatus('✅ Logged out.');
-      setFiles([]);
-      return;
-    }
+  const handleLogin = useCallback(
+    async (username: string, password: string, isRegister?: boolean) => {
+      if (isLoggedIn) {
+        // Logout
+        await callServer({ mode: 'LOGOUT_USER', method: 'GET' });
+        setIsLoggedIn(false);
+        setCurrentUserId(0);
+        setLoginStatus('✅ Logged out.');
+        setFilesState({ files: [], metadata: {} });
+        return;
+      }
 
-    if (!username || !password) {
-      setLoginStatus('❌ Missing username or password.');
-      return;
-    }
+      if (!username || !password) return;
 
-    setLoginStatus('Logging in...');
+      setLoginStatus('Logging in...');
 
-    try {
-      // Check if user exists
-      const userCheck = await callServer({
-        mode: 'GET_USER',
-        method: 'POST',
-        login: username,
-      });
+      try {
+        // Check if user exists
+        const userCheck = await callServer({
+          mode: 'GET_USER',
+          method: 'POST',
+          login: username,
+        });
 
-      const userNotFound = !userCheck.success || userCheck.data?.length === 0;
+        const userNotFound = !userCheck.success || userCheck.data?.length === 0;
 
-      if (userNotFound) {
-        const shouldCreate = window.confirm(
-          `User "${username}" does not exist.\nDo you want to create a new account?`,
-        );
-
-        if (!shouldCreate) {
-          setLoginStatus('❌ Login cancelled.');
-          return;
+        if (userNotFound && isRegister) {
+          setLoginStatus('Creating user...');
+          await callServer({
+            mode: 'ADD_USER',
+            method: 'POST',
+            login: username,
+            password,
+          });
         }
 
-        setLoginStatus('Creating user...');
-        await callServer({
-          mode: 'ADD_USER',
+        // Login
+        const loginRes = await callServer({
+          mode: 'LOGIN_USER',
           method: 'POST',
           login: username,
           password,
         });
-      }
 
-      // Login
-      const loginRes = await callServer({
-        mode: 'LOGIN_USER',
-        method: 'POST',
-        login: username,
-        password,
-      });
-
-      if (loginRes.success) {
-        setIsLoggedIn(true);
-        setCurrentUserId(loginRes.data.userId);
-        setLoginStatus('✅ Logged in.');
-      } else {
-        setLoginStatus('❌ Login failed.' + (loginRes.status === 401 ? ' Incorrect credentials.' : ''));
+        if (loginRes.success) {
+          setIsLoggedIn(true);
+          setCurrentUserId(loginRes.data.userId);
+          setLoginStatus('✅ Logged in.');
+        } else {
+          setLoginStatus(
+            '❌ Login failed.' +
+              (loginRes.status === 401 ? ' Incorrect credentials.' : '')
+          );
+        }
+      } catch (err) {
+        console.error(err);
+        setLoginStatus('❌ Unexpected error');
       }
-    } catch (err) {
-      console.error(err);
-      setLoginStatus('❌ Unexpected error');
-    }
-  }, [isLoggedIn]);
+    },
+    [isLoggedIn]
+  );
 
   useEffect(() => {
     checkSession();
@@ -129,7 +137,7 @@ export const useAuth = (): UseAuthResult => {
     currentUserId,
     isLoggedIn,
     loginStatus,
-    files,
+    filesState,
     handleLogin,
     fetchFiles,
   };

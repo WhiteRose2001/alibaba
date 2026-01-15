@@ -1,16 +1,49 @@
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/500.css';
+import '@fontsource/inter/600.css';
+
+import '@fontsource/poppins/400.css';
+import '@fontsource/poppins/600.css';
+import '@fontsource/poppins/700.css';
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { App } from './App';
+import App from './App';
+import { BrowserRouter } from 'react-router-dom';
 
-// Automatically import all CSS files in ./css and subfolders
-import.meta.glob('./css/**/*.css', { eager: true });
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider } from '@mui/material/styles';
+import 'leaflet/dist/leaflet.css';
 
-// Import your main App component
+import getTheme from './theme/theme';
 
-const root = document.getElementById('root')!;
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
 
-ReactDOM.createRoot(root).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-);
+function Main() {
+  const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
+
+  const colorMode = React.useMemo(
+    () => ({
+      toggleColorMode: () =>
+        setMode((prev) => (prev === 'light' ? 'dark' : 'light')),
+    }),
+    [],
+  );
+
+  const theme = React.useMemo(() => getTheme(mode), [mode]);
+
+  return (
+    <ColorModeContext.Provider value={colorMode}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter>
+          <App toggleColorMode={colorMode.toggleColorMode} />
+        </BrowserRouter>
+      </ThemeProvider>
+    </ColorModeContext.Provider>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')!).render(<Main />);
+
+export type ColorModeContextType = typeof ColorModeContext;
