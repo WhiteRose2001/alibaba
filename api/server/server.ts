@@ -27,6 +27,7 @@ import getUser from "./routes/users/getUser.js";
 import loginUser from "./routes/users/loginUser.js";
 import logoutUser from "./routes/users/logoutUser.js";
 import meUser from "./routes/users/meUser.js";
+import { createMySQLSessionStore } from "../db/mysql/sessions/setupSession.js";
 
 dotenv.config();
 
@@ -53,9 +54,10 @@ app.use(
   }),
 );
 
-const { sessionStore } = await connectToDB();
-if (sessionStore) {
-  app.use(setupSession(sessionStore));
+const sessionStore = await createMySQLSessionStore();
+if (sessionStore !== null) {
+  const session = setupSession(sessionStore);
+  app.use(session);
 }
 
 app.use("/files/upload", uploadFile);

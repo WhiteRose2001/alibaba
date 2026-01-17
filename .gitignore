@@ -12,3 +12,4 @@ deploy.sh
 localhost-key.pem
 localhost.crt
 ssh_connection_key.pem
+aiven-ca.crt
