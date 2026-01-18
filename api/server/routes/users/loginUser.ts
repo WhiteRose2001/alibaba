@@ -5,7 +5,6 @@ import { getUserByLogin } from "./getUser.js";
 const loginUser = Router();
 
 loginUser.post("/", async (req, res) => {
-  console.log("Login attempt:", req.body, "aaaaaaaaaaaaaaaaaaaaaaaaa");
   const { login, password } = req.body;
   if (!login || !password)
     return res.status(400).json({ error: "Missing password or login" });

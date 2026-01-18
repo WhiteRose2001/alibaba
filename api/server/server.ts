@@ -48,6 +48,13 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(
+  cors({
+    origin: isProd ? true : "https://localhost:5173",
+    credentials: true,
+  }),
+);
+
+app.use(
   helmet({
     contentSecurityPolicy: isProd ? undefined : false,
   }),
