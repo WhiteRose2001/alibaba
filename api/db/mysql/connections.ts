@@ -18,7 +18,10 @@ export const getMySqlPool = async () => {
   if (pool) return pool;
 
   try {
-    const fullPath = path.join(__dirname, "../../../", AIVEN_FILE);
+    const fullPath =
+      process.env.NODE_ENV === "production"
+        ? path.join(__dirname, "../../../../", AIVEN_FILE)
+        : path.join(__dirname, "../../../", AIVEN_FILE);
 
     const ca = fs.readFileSync(fullPath, "utf8");
     const user = process.env.AIVEN_USER;
