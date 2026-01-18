@@ -56,7 +56,27 @@ app.use(
 
 app.use(
   helmet({
-    contentSecurityPolicy: isProd ? undefined : false,
+    contentSecurityPolicy: isProd
+      ? {
+          directives: {
+            defaultSrc: ["'self'"],
+            imgSrc: [
+              "'self'",
+              "data:",
+              "blob:",
+              "https://*.tile.openstreetmap.org",
+              "https://tile.openstreetmap.org",
+            ],
+            styleSrc: [
+              "'self'",
+              "'unsafe-inline'", // Leaflet CSS
+            ],
+            scriptSrc: ["'self'"],
+            connectSrc: ["'self'"],
+            fontSrc: ["'self'"],
+          },
+        }
+      : false,
   }),
 );
 
