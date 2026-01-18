@@ -20,7 +20,7 @@ export const getMySqlPool = async () => {
   try {
     const fullPath =
       process.env.NODE_ENV === "production"
-        ? path.join(__dirname, "../../../../", AIVEN_FILE)
+        ? `/etc/secrets/${AIVEN_FILE}`
         : path.join(__dirname, "../../../", AIVEN_FILE);
 
     const ca = fs.readFileSync(fullPath, "utf8");
