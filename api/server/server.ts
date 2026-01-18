@@ -73,7 +73,7 @@ app.use("/users/me", meUser);
 if (isProd) {
   const __filename = fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
-  const frontendPath = path.resolve(__dirname, "../../../");
+  const frontendPath = "/opt/render/project/src/dist";
   console.log("✅ Serving frontend from:", frontendPath);
   app.use(express.static(frontendPath));
 
