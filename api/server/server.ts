@@ -70,17 +70,17 @@ app.use("/users/login", loginUser);
 app.use("/users/logout", logoutUser);
 app.use("/users/me", meUser);
 
-// if (isProd) {
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const frontendPath = path.join(__dirname, "../../dist");
-console.log("✅ Serving frontend from:", frontendPath);
-app.use(express.static(frontendPath));
+if (isProd) {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = path.dirname(__filename);
+  const frontendPath = path.resolve(__dirname, "../../../");
+  console.log("✅ Serving frontend from:", frontendPath);
+  app.use(express.static(frontendPath));
 
-app.get("/*splat", (_, res) => {
-  res.sendFile(path.join(frontendPath, "index.html"));
-});
-// }
+  app.get("/*splat", (_, res) => {
+    res.sendFile(path.join(frontendPath, "index.html"));
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({ message: "Not Found" });
