@@ -24,7 +24,7 @@ const REQUIRED_FIELDS: Record<CallServerParams["mode"], string[]> = {
   CHECK_USER_SESSION: [],
 };
 
-const isDev = import.meta.env.DEV;
+const isDev = import.meta.env.VITE_ENV === "development";
 
 const expressServerUrl = isDev
   ? import.meta.env.VITE_SERVER_URL || "https://localhost:8081"
