@@ -116,13 +116,7 @@ app.use((req, res) => {
 let server;
 
 if (!isProd) {
-  if (
-    !fs.existsSync(`${CERTS_DIR}${CERT_FILE}`) ||
-    !fs.existsSync(`${CERTS_DIR}${KEY_FILE}`)
-  ) {
-    await checkForCerts(KEY_FILE, CERT_FILE);
-  }
-
+  await checkForCerts(KEY_FILE, CERT_FILE);
   server = https
     .createServer(
       {

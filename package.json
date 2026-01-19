@@ -12,7 +12,7 @@
     "lint": "eslint --ext [.ts,.tsx] ./src --cache --cache-location ./dist",
     "preview": "vite preview",
     "typecheck": "npx tsc --noEmit --watch --project tsconfig.app.json --preserveWatchOutput",
-    "dev": "concurrently -n CLIENT,SERVER,TYPECHECK -c purple,green,blue \"vite\" \"npm run dev:server\" \"npm run typecheck\"",
+    "dev": "concurrently -n CLIENT,SERVER,TYPECHECK -c purple,green,blue \"npx tsx api/certs/run.ts && vite\" \"npm run dev:server\" \"npm run typecheck\"",
     "start": "node dist/api/server/server.js"
   },
   "dependencies": {
