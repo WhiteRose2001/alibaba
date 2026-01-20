@@ -3,10 +3,17 @@ import { useState } from 'react';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { IconButton, List, ListItem, ListItemText, Tooltip } from '@mui/material';
+import {
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Tooltip,
+} from '@mui/material';
 
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import InfoIcon from '@mui/icons-material/Info';
+import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 
 import { useDeleteFile } from '../hooks/useDeleteFile';
 import SensitiveExifDialog from '../components/metadata/SensitiveMetadataDialog';
@@ -38,44 +45,68 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
               const hasMetadata = Boolean(metadata[file]);
 
               return (
-                <ListItem
-                  key={file}
-                  divider
-                  secondaryAction={
-                    <IconButton
-                      edge="end"
-                      aria-label="delete"
-                      onClick={(e) => handleDelete(e, file)}
-                    >
-                      <DeleteForeverIcon color="warning" />
-                    </IconButton>
-                  }
-                >
+                <ListItem key={file} divider>
                   <ListItemText primary={file} />
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {hasMetadata && (
+                      <Tooltip title={`Usuń metadane dla ${file}`}>
+                        <span>
+                          <IconButton
+                            aria-label="remove-metadata"
+                            disabled={!hasMetadata}
+                            onClick={() => {
+                              if (!hasMetadata) return;
+                              setSelectedFile(file);
+                              setOpenInfo(true);
+                            }}
+                          >
+                            <DisabledVisibleIcon />
+                          </IconButton>
+                        </span>
+                      </Tooltip>
+                    )}
 
-                  <Tooltip title={hasMetadata ? `Pokaż metadane dla ${file}` : `Brak metadanych dla ${file}`}>
-                    <span>
+                    <Tooltip
+                      title={
+                        hasMetadata
+                          ? `Pokaż metadane dla ${file}`
+                          : `Brak metadanych dla ${file}`
+                      }
+                    >
+                      <span>
+                        <IconButton
+                          aria-label="info"
+                          disabled={!hasMetadata}
+                          onClick={() => {
+                            if (!hasMetadata) return;
+                            setSelectedFile(file);
+                            setOpenInfo(true);
+                          }}
+                        >
+                          <InfoIcon color={hasMetadata ? 'info' : 'disabled'} />
+                        </IconButton>
+                      </span>
+                    </Tooltip>
+
+                    <Tooltip title={`Usuń plik ${file}`}>
                       <IconButton
-                        edge="end"
-                        aria-label="info"
-                        disabled={!hasMetadata}
-                        onClick={() => {
-                          if (!hasMetadata) return;
-                          setSelectedFile(file);
-                          setOpenInfo(true);
-                        }}
+                        aria-label="delete"
+                        onClick={(e) => handleDelete(e, file)}
                       >
-                        <InfoIcon color={hasMetadata ? 'info' : 'disabled'} />
+                        <DeleteForeverIcon />
                       </IconButton>
-                    </span>
-                  </Tooltip>
+                    </Tooltip>
+                  </Box>
                 </ListItem>
               );
             })
           ) : (
-            <Typography color="text.secondary">
-              Brak plików
-            </Typography>
+            <Typography color="text.secondary">Brak plików</Typography>
           )}
         </List>
       </Paper>

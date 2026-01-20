@@ -17,21 +17,18 @@ export default function LocationAddress({ latitude, longitude }: Props) {
   if (!address) {
     return (
       <Typography color="text.secondary">
-        Nie udało się ustalić adresu
+        The address could not be determined
       </Typography>
     );
   }
 
-  const city =
-    address.city || address.town || address.village || '';
+  const city = address.city || address.town || address.village || '';
 
   return (
     <Box sx={{ mt: 2 }}>
       <Box display="flex" alignItems="center" gap={1} mb={0.5}>
         <HomeIcon fontSize="small" />
-        <Typography variant="subtitle2">
-          Dokładny adres
-        </Typography>
+        <Typography variant="subtitle2">Exact address</Typography>
       </Box>
 
       <Typography>

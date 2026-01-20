@@ -30,13 +30,17 @@ type Props = {
   fileMetadata: SensitiveMetadata | null;
 };
 
-export default function SensitiveExifDialog({ open, onClose, fileName, fileMetadata }: Props) {
+export default function SensitiveExifDialog({
+  open,
+  onClose,
+  fileName,
+  fileMetadata,
+}: Props) {
   if (!fileMetadata) return;
   const { location, time, device } = fileMetadata;
 
   return (
-    <Dialog fullScreen open={open} onClose={onClose}
-    >
+    <Dialog fullScreen open={open} onClose={onClose}>
       <AppBar sx={{ position: 'relative' }}>
         <Toolbar>
           <IconButton edge="start" color="inherit" onClick={onClose}>
@@ -44,12 +48,12 @@ export default function SensitiveExifDialog({ open, onClose, fileName, fileMetad
           </IconButton>
 
           <Typography sx={{ ml: 2, flex: 1 }} variant="h6">
-            Wrażliwe dane ujawniane przez zdjęcie
+            Sensitive data revealed in the photo
           </Typography>
 
           <Chip
             icon={<WarningAmberIcon />}
-            label="Dane wrażliwe"
+            label="Sensitive data"
             color="warning"
           />
         </Toolbar>
@@ -61,23 +65,37 @@ export default function SensitiveExifDialog({ open, onClose, fileName, fileMetad
         </Typography>
         <ImagePreview
           src={`api/server/storage/files/${fileName}`}
-          alt={`Podgląd ${fileName}`}
+          alt={`Preview ${fileName}`}
         />
 
         <Typography color="text.secondary" sx={{ mb: 3 }}>
-          To zdjęcie zawiera metadane, które mogą ujawniać informacje o Tobie,
-          Twojej lokalizacji oraz urządzeniu.
+          This photo contains metadata that may reveal information about you,
+          your location, and your device.
         </Typography>
 
         <Section
           icon={<LocationOnIcon color="error" />}
-          title="Lokalizacja"
-          description="Pozwala ustalić dokładne miejsce wykonania zdjęcia"
+          title="Location"
+          description="Allows you to determine the exact location where the photo was taken"
           items={[
-            ['Szerokość geograficzna', location?.latitude ? location.latitude.toFixed(6) : '-'],
-            ['Długość geograficzna', location?.longitude ? location.longitude.toFixed(6) : '-'],
-            ['Wysokość', location?.altitude ? `${location.altitude.toFixed(0)} m` : '-'],
-            ['Dokładność GPS', location?.gpsAccuracy ? `~ ${location.gpsAccuracy.toFixed(1)} m` : '-'],
+            [
+              'Latitude',
+              location?.latitude ? location.latitude.toFixed(6) : '-',
+            ],
+            [
+              'Longitude',
+              location?.longitude ? location.longitude.toFixed(6) : '-',
+            ],
+            [
+              'Altitude',
+              location?.altitude ? `${location.altitude.toFixed(0)} m` : '-',
+            ],
+            [
+              'GPS accuracy',
+              location?.gpsAccuracy
+                ? `~ ${location.gpsAccuracy.toFixed(1)} m`
+                : '-',
+            ],
           ]}
         >
           {location?.latitude && location?.longitude && (
@@ -99,12 +117,12 @@ export default function SensitiveExifDialog({ open, onClose, fileName, fileMetad
 
         <Section
           icon={<AccessTimeIcon color="warning" />}
-          title="Czas wykonania"
-          description="Ujawnia dokładny moment wykonania zdjęcia"
+          title="Execution time"
+          description="Reveals the exact moment the photo was taken"
           items={[
-            ['Data', time?.date ? time.date : '-'],
-            ['Godzina', time?.time ? time.time : '-'],
-            ['Strefa czasowa', time?.timezone ? time.timezone : '-'],
+            ['Date', time?.date ? time.date : '-'],
+            ['Time', time?.time ? time.time : '-'],
+            ['Time zone', time?.timezone ? time.timezone : '-'],
           ]}
         />
 
@@ -112,12 +130,12 @@ export default function SensitiveExifDialog({ open, onClose, fileName, fileMetad
 
         <Section
           icon={<PhoneIphoneIcon />}
-          title="Urządzenie"
-          description="Umożliwia profilowanie sprzętu"
+          title="Device"
+          description="Reveals device parameters"
           items={[
-            ['Producent', device?.manufacturer ? device.manufacturer : '-'],
+            ['Manufacturer', device?.manufacturer ? device.manufacturer : '-'],
             ['Model', device?.model ? device.model : '-'],
-            ['Obiektyw', device?.lens ? device.lens : '-'],
+            ['Lens', device?.lens ? device.lens : '-'],
           ]}
         />
       </Box>
@@ -132,12 +150,11 @@ function Section({
   items,
   children,
 }: {
-
   icon: React.ReactNode;
   title: string;
   description: string;
   items: [string, string | number][];
-    children?: React.ReactNode;
+  children?: React.ReactNode;
 }) {
   return (
     <Box>
@@ -159,6 +176,5 @@ function Section({
       </List>
       {children}
     </Box>
-
   );
 }
