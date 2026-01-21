@@ -25,12 +25,10 @@ uploadFile.post("/", fileStorage.single("file"), async (req, res) => {
   const path = `${storageDir}/${filename}`;
   if (!userId || !filename) {
     fs.unlinkSync(path);
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "UserId and filename are required in body",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "UserId and filename are required in body",
+    });
   }
 
   let fileId: number | undefined;
@@ -43,12 +41,10 @@ uploadFile.post("/", fileStorage.single("file"), async (req, res) => {
     } catch (unlinkErr: any) {
       console.error("⚠️ Failed to remove uploaded file:", unlinkErr?.message);
     }
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "Database error during file insert: " + err?.message,
-      });
+    return res.status(500).json({
+      success: false,
+      message: "Database error during file insert: " + err?.message,
+    });
   }
 
   res.json({
