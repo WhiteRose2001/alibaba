@@ -10,7 +10,7 @@ interface UseAuthResult {
   handleLogin: (
     username: string,
     password: string,
-    isRegister?: boolean
+    isRegister?: boolean,
   ) => Promise<void>;
   fetchFiles: () => Promise<void>;
 }
@@ -118,7 +118,7 @@ export const useAuth = (): UseAuthResult => {
         } else {
           setLoginStatus(
             '❌ Login failed.' +
-              (loginRes.status === 401 ? ' Incorrect credentials.' : '')
+              (loginRes.status === 401 ? ' Incorrect credentials.' : ''),
           );
         }
       } catch (err) {
@@ -126,7 +126,7 @@ export const useAuth = (): UseAuthResult => {
         setLoginStatus('❌ Unexpected error');
       }
     },
-    [isLoggedIn]
+    [isLoggedIn],
   );
 
   useEffect(() => {

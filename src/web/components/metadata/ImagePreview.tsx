@@ -14,19 +14,24 @@ export default function ImagePreview({ src, alt }: Props) {
         mb: 4,
         borderRadius: 2,
         overflow: 'hidden',
-        backgroundColor: 'black',
+        backgroundColor: 'background.paper',
+        boxShadow: 2,
+
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
       }}
     >
-      <img
+      <Box
+        component="img"
         src={src}
         alt={alt}
-        style={{
+        sx={{
           maxWidth: '100%',
-          maxHeight: '100%',
+          maxHeight: 420,
           objectFit: 'contain',
+          userSelect: 'none',
+          pointerEvents: 'none',
         }}
       />
     </Box>

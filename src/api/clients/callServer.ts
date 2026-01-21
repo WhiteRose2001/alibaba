@@ -1,33 +1,35 @@
-import { CallServerParams } from "../types";
+import { CallServerParams } from '../types';
 
-const PATHS: Record<CallServerParams["mode"], string> = {
-  UPLOAD: "/files/upload",
-  LIST_FILES: "/files/list",
-  DELETE_FILE: "/files/delete",
-  ADD_USER: "/users/add",
-  LOGIN_USER: "/users/login",
-  GET_USER: "/users/get",
-  DELETE_USER: "/users/delete",
-  LOGOUT_USER: "/users/logout",
-  CHECK_USER_SESSION: "/users/me",
+const PATHS: Record<CallServerParams['mode'], string> = {
+  UPLOAD: '/files/upload',
+  LIST_FILES: '/files/list',
+  DELETE_FILE: '/files/delete',
+  DELETE_METADATA: '/files/delete_metadata',
+  ADD_USER: '/users/add',
+  LOGIN_USER: '/users/login',
+  GET_USER: '/users/get',
+  DELETE_USER: '/users/delete',
+  LOGOUT_USER: '/users/logout',
+  CHECK_USER_SESSION: '/users/me',
 } as const;
 
-const REQUIRED_FIELDS: Record<CallServerParams["mode"], string[]> = {
-  UPLOAD: ["file"],
+const REQUIRED_FIELDS: Record<CallServerParams['mode'], string[]> = {
+  UPLOAD: ['file'],
   LIST_FILES: [],
-  DELETE_FILE: ["filename"],
-  ADD_USER: ["login", "password"],
-  LOGIN_USER: ["login", "password"],
-  GET_USER: ["login"],
-  DELETE_USER: ["userId"],
+  DELETE_FILE: ['filename'],
+  DELETE_METADATA: ['filename'],
+  ADD_USER: ['login', 'password'],
+  LOGIN_USER: ['login', 'password'],
+  GET_USER: ['login'],
+  DELETE_USER: ['userId'],
   LOGOUT_USER: [],
   CHECK_USER_SESSION: [],
 };
 
-const isDev = import.meta.env.VITE_ENV === "development";
+const isDev = import.meta.env.VITE_ENV === 'development';
 
 const expressServerUrl = isDev
-  ? import.meta.env.VITE_SERVER_URL || "https://localhost:8081"
+  ? import.meta.env.VITE_SERVER_URL || 'https://localhost:8081'
   : undefined;
 
 export async function callServer(
@@ -46,22 +48,22 @@ export async function callServer(
     }
   }
 
-  const isFileUpload = mode === "UPLOAD";
+  const isFileUpload = mode === 'UPLOAD';
   const headers: Record<string, string> = {};
   let body: FormData | string | undefined;
 
   if (isFileUpload) {
     const formData = new FormData();
-    formData.append("file", params.file!);
+    formData.append('file', params.file!);
     Object.entries(params.additionalData ?? {}).forEach(([k, v]) =>
       formData.append(k, String(v)),
     );
     body = formData;
   } else {
-    headers["Content-Type"] = "application/json";
+    headers['Content-Type'] = 'application/json';
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { method, mode, ...rest } = params;
-    if (Object.keys(rest).length > 0 && method !== "GET") {
+    if (Object.keys(rest).length > 0 && method !== 'GET') {
       body = JSON.stringify(rest);
     }
   }
@@ -71,7 +73,7 @@ export async function callServer(
       method,
       headers,
       body,
-      credentials: "include",
+      credentials: 'include',
     });
 
     const json = await response.json().catch(() => ({}));
@@ -80,14 +82,14 @@ export async function callServer(
       status: response.status,
       data: json,
       message: response.ok
-        ? "✅ Request succeeded"
+        ? '✅ Request succeeded'
         : `❌ ${mode} failed (${response.status} ${response.statusText})`,
     };
   } catch (err) {
     return {
       success: false,
       status: 0,
-      message: err instanceof Error ? err.message : "Network error",
+      message: err instanceof Error ? err.message : 'Network error',
     };
   }
 }
