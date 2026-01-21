@@ -81,18 +81,29 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                 <ListItem
                   key={file}
                   divider
-                  sx={{
-                    px: 2,
-                    py: 1.5,
-                    alignItems: 'center',
-                  }}
+                  sx={{ px: 2, py: 1.5, alignItems: 'center' }}
                   secondaryAction={
                     <Stack direction="row" spacing={0.5}>
+                      {/* REMOVE METADATA */}
+                      {hasMetadata && (
+                        <Tooltip title={`Delete metadata for ${file}`}>
+                          <span>
+                            <IconButton
+                              disabled={!hasMetadata}
+                              onClick={(e) => handleDeleteMetadata(e, file)}
+                            >
+                              <DisabledVisibleIcon />
+                            </IconButton>
+                          </span>
+                        </Tooltip>
+                      )}
+
+                      {/* SHOW METADATA */}
                       <Tooltip
                         title={
                           hasMetadata
-                            ? `Pokaż metadane dla ${file}`
-                            : `Brak metadanych`
+                            ? `Show metadata for ${file}`
+                            : `No metadata for ${file}`
                         }
                       >
                         <span>
@@ -107,13 +118,16 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                         </span>
                       </Tooltip>
 
-                      <IconButton onClick={(e) => handleDelete(e, file)}>
-                        <DeleteForeverIcon color="warning" />
-                      </IconButton>
+                      {/* DELETE FILE */}
+                      <Tooltip title={`Delete file ${file}`}>
+                        <IconButton onClick={(e) => handleDelete(e, file)}>
+                          <DeleteForeverIcon color="warning" />
+                        </IconButton>
+                      </Tooltip>
                     </Stack>
                   }
                 >
-                  {/* MINIATURA / FALLBACK */}
+                  {/* THUMBNAIL / FALLBACK */}
                   <ListItemAvatar sx={{ minWidth: 64 }}>
                     {isImage ? (
                       <Box
@@ -126,7 +140,6 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                           width: 48,
                           height: 48,
                           borderRadius: 1,
-                          backgroundColor: 'black',
                           backgroundImage: `url(${getImageUrl(file)})`,
                           backgroundSize: 'cover',
                           backgroundPosition: 'center',
@@ -135,8 +148,6 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                             0.5,
                           )}`,
                           cursor: hasMetadata ? 'pointer' : 'not-allowed',
-                          transition: 'box-shadow 0.2s ease',
-
                           ...(hasMetadata && {
                             '&:hover': {
                               boxShadow: `0 0 0 2px ${alpha(
@@ -148,27 +159,16 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                         })}
                       />
                     ) : (
-                      <Avatar
-                        variant="rounded"
-                        sx={{
-                          width: 48,
-                          height: 48,
-                          bgcolor: 'grey.700',
-                          fontWeight: 600,
-                        }}
-                      >
+                      <Avatar variant="rounded" sx={{ width: 48, height: 48 }}>
                         {getFallbackLetter(file)}
                       </Avatar>
                     )}
                   </ListItemAvatar>
 
-                  {/* NAZWA PLIKU */}
+                  {/* FILE NAME */}
                   <ListItemText
                     primary={file}
-                    primaryTypographyProps={{
-                      noWrap: true,
-                      fontWeight: 500,
-                    }}
+                    primaryTypographyProps={{ noWrap: true, fontWeight: 500 }}
                   />
                 </ListItem>
               );
