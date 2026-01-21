@@ -135,7 +135,6 @@ export default function DashboardLayout(props: {
         component="main"
         sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}
       >
-        {/* spacer odpowiadający AppBar: użyj Toolbar */}
         <Toolbar />
 
         <Container
@@ -143,7 +142,6 @@ export default function DashboardLayout(props: {
           disableGutters
           sx={{ py: 4, px: { xs: 2, sm: 3, md: 4 } }}
         >
-          {/* Outlet wyrenderuje treść strony (home, upload, files, settings) */}
           <Outlet />
         </Container>
       </Box>
