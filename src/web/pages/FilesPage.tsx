@@ -18,6 +18,7 @@ import DisabledVisibleIcon from '@mui/icons-material/DisabledVisible';
 import { useDeleteFile } from '../hooks/useDeleteFile';
 import SensitiveExifDialog from '../components/metadata/SensitiveMetadataDialog';
 import { FilesState } from '../hooks/types/SensitiveMetadata';
+import { useDeleteMetadata } from '../hooks/useDeleteMetadata';
 
 type Props = {
   filesState: FilesState;
@@ -26,6 +27,7 @@ type Props = {
 
 export default function FilesPage({ filesState, fetchFiles }: Props) {
   const { handleDelete } = useDeleteFile(fetchFiles);
+  const { handleDeleteMetadata } = useDeleteMetadata(fetchFiles);
 
   const [openInfo, setOpenInfo] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
@@ -54,15 +56,14 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                     }}
                   >
                     {hasMetadata && (
-                      <Tooltip title={`Usuń metadane dla ${file}`}>
+                      <Tooltip title={`Delete metadata for ${file}`}>
                         <span>
                           <IconButton
                             aria-label="remove-metadata"
                             disabled={!hasMetadata}
-                            onClick={() => {
+                            onClick={(e) => {
                               if (!hasMetadata) return;
-                              setSelectedFile(file);
-                              setOpenInfo(true);
+                              handleDeleteMetadata(e, file);
                             }}
                           >
                             <DisabledVisibleIcon />
@@ -74,8 +75,8 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                     <Tooltip
                       title={
                         hasMetadata
-                          ? `Pokaż metadane dla ${file}`
-                          : `Brak metadanych dla ${file}`
+                          ? `Show metadata for ${file}`
+                          : `No metadata for ${file}`
                       }
                     >
                       <span>
