@@ -2,10 +2,15 @@ import { execFile } from "child_process";
 import fs from "fs";
 import path from "path";
 import { Router } from "express";
+import { fileURLToPath } from "url";
+import { getMySqlPool } from "../../../db/mysql/connections.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const removeMetadata = Router();
 
-removeMetadata.post("/", (req, res) => {
+removeMetadata.post("/", async (req, res) => {
   const { filename } = req.body;
 
   if (!filename || typeof filename !== "string") {
@@ -28,13 +33,23 @@ removeMetadata.post("/", (req, res) => {
   execFile(
     "exiftool",
     ["-all:all=", "-overwrite_original", filePath],
-    (error) => {
+    async (error) => {
       if (error) {
         console.error(error);
         return res.status(500).json({
           success: false,
           message: "ExifTool failed",
         });
+      }
+
+      try {
+        const pool = await getMySqlPool();
+        await pool.execute(
+          "UPDATE files SET METADATA = 'N' WHERE filename = ?",
+          [filename],
+        );
+      } catch (err) {
+        console.error("DB update failed:", err);
       }
 
       return res.json({
