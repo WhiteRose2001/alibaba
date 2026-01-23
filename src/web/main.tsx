@@ -17,7 +17,7 @@ import 'leaflet/dist/leaflet.css';
 
 import getTheme from './theme/theme';
 
-const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+const ColorModeContext = React.createContext({ toggleColorMode: () => {} }); //
 
 function Main() {
   const [mode, setMode] = React.useState<'light' | 'dark'>('dark');
