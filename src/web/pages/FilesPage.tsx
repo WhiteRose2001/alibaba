@@ -23,6 +23,8 @@ import { useDeleteFile } from '../hooks/useDeleteFile';
 import SensitiveExifDialog from '../components/metadata/SensitiveMetadataDialog';
 import { FilesState } from '../hooks/types/SensitiveMetadata';
 import { useDeleteMetadata } from '../hooks/useDeleteMetadata';
+import DownloadIcon from '@mui/icons-material/Download';
+import { expressServerUrl } from '../../api/clients/callServer';
 
 type Props = {
   filesState: FilesState;
@@ -64,6 +66,32 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
     setOpenInfo(true);
   };
 
+  const downloadFile = async (file: string) => {
+    const res = await fetch(
+      `${expressServerUrl}/files/download?filename=${encodeURIComponent(file)}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+    );
+
+    if (!res.ok) {
+      throw new Error('Download failed');
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = file;
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    window.URL.revokeObjectURL(url);
+  };
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -84,6 +112,12 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                   sx={{ px: 2, py: 1.5, alignItems: 'center' }}
                   secondaryAction={
                     <Stack direction="row" spacing={0.5}>
+                      {/* DOWNLOAD FILE */}
+                      <Tooltip title={`Download ${file}`}>
+                        <IconButton onClick={() => downloadFile(file)}>
+                          <DownloadIcon />
+                        </IconButton>
+                      </Tooltip>
                       {/* REMOVE METADATA */}
                       {hasMetadata && (
                         <Tooltip title={`Delete metadata for ${file}`}>

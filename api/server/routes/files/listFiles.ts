@@ -24,8 +24,6 @@ listFiles.get('/', async (req, res) => {
     metadataMap.set(row.filename, row.METADATA);
   });
 
-  console.log(metadataMap);
-
   await Promise.all(
     files.map(async (filename) => {
       try {

@@ -28,7 +28,7 @@ const REQUIRED_FIELDS: Record<CallServerParams['mode'], string[]> = {
 
 const isDev = import.meta.env.VITE_ENV === 'development';
 
-const expressServerUrl = isDev
+export const expressServerUrl = isDev
   ? import.meta.env.VITE_SERVER_URL || 'https://localhost:8081'
   : undefined;
 
