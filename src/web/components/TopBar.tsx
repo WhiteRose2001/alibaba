@@ -82,11 +82,10 @@ export default function TopBar({
           }}
         >
           <Typography variant="h6" sx={{ lineHeight: 1 }}>
-            alibaba
+            MetaRem
           </Typography>
         </Box>
         <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
-
           <Tooltip title="Toggle theme">
             <IconButton onClick={onToggleTheme} size="small">
               {isDark ? <LightModeIcon /> : <DarkModeIcon />}
