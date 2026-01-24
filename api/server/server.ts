@@ -25,6 +25,7 @@ import deleteUser from './routes/users/deleteUser.js';
 import getUser from './routes/users/getUser.js';
 import loginUser from './routes/users/loginUser.js';
 import logoutUser from './routes/users/logoutUser.js';
+import reverseGeocode from './routes/location/reverseGeocode.js';
 import meUser from './routes/users/meUser.js';
 import { createMySQLSessionStore } from '../db/mysql/sessions/setupSession.js';
 import removeMetadata from './routes/files/removeMetadata.js';
@@ -100,6 +101,8 @@ app.use('/users/delete', deleteUser);
 app.use('/users/login', loginUser);
 app.use('/users/logout', logoutUser);
 app.use('/users/me', meUser);
+
+app.use('/location/reverse-geocode', reverseGeocode);
 
 if (isProd) {
   const __filename = fileURLToPath(import.meta.url);

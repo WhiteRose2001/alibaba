@@ -11,31 +11,20 @@ type Address = {
   country?: string;
 };
 
-export function useReverseGeocode(
-  latitude?: number,
-  longitude?: number,
-) {
+export function useReverseGeocode(latitude?: number, longitude?: number) {
   const [address, setAddress] = useState<Address | null>(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!latitude || !longitude) return;
+    if (latitude == null || longitude == null) return;
 
     const controller = new AbortController();
-
     async function fetchAddress() {
       try {
         setLoading(true);
-
         const res = await fetch(
-          `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${latitude}&lon=${longitude}`,
-          {
-            headers: {
-              // wymagane przez Nominatim
-              'Accept': 'application/json',
-            },
-            signal: controller.signal,
-          },
+          `/location/reverse-geocode?lat=${latitude}&lon=${longitude}`,
+          { signal: controller.signal },
         );
 
         const data = await res.json();
