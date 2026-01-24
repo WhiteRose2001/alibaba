@@ -17,7 +17,7 @@ downloadRouter.get('/', (req, res) => {
   const safeName = path.basename(filename);
   //
   const filePath = path.resolve(__dirname, '../../storage/files', safeName);
-  res.download(filePath, 'raport.pdf');
+  res.download(filePath, safeName);
 });
 
 export default downloadRouter;
