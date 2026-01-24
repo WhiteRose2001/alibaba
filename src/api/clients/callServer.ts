@@ -4,7 +4,7 @@ const PATHS: Record<CallServerParams['mode'], string> = {
   UPLOAD: '/files/upload',
   LIST_FILES: '/files/list',
   DELETE_FILE: '/files/delete',
-  DELETE_METADATA: '/files/delete_metadata',
+  DELETE_METADATA: '/files/remove-metadata',
   ADD_USER: '/users/add',
   LOGIN_USER: '/users/login',
   GET_USER: '/users/get',
@@ -28,7 +28,7 @@ const REQUIRED_FIELDS: Record<CallServerParams['mode'], string[]> = {
 
 const isDev = import.meta.env.VITE_ENV === 'development';
 
-const expressServerUrl = isDev
+export const expressServerUrl = isDev
   ? import.meta.env.VITE_SERVER_URL || 'https://localhost:8081'
   : undefined;
 

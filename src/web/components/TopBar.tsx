@@ -85,16 +85,7 @@ export default function TopBar({
             alibaba
           </Typography>
         </Box>
-
         <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Button
-            variant="contained"
-            startIcon={<UploadFileIcon />}
-            size="small"
-            onClick={onUploadClick}
-          >
-            Upload
-          </Button>
 
           <Tooltip title="Toggle theme">
             <IconButton onClick={onToggleTheme} size="small">
@@ -118,24 +109,6 @@ export default function TopBar({
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            <MenuItem
-              onClick={() => {
-                setAnchorEl(null);
-                onNavigate?.('/profile');
-              }}
-            >
-              Profile
-            </MenuItem>
-
-            <MenuItem
-              onClick={() => {
-                setAnchorEl(null);
-                onNavigate?.('/settings');
-              }}
-            >
-              Settings
-            </MenuItem>
-
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);

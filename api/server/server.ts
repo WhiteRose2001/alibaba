@@ -18,7 +18,6 @@ import {
 import { setupSession } from './session/setupSession.js';
 
 import deleteFile from './routes/files/deleteFile.js';
-import deleteMetadata from './routes/files/deleteMetadata.js';
 import listFiles from './routes/files/listFiles.js';
 import uploadFile from './routes/files/uploadFile.js';
 import addUser from './routes/users/addUser.js';
@@ -28,6 +27,8 @@ import loginUser from './routes/users/loginUser.js';
 import logoutUser from './routes/users/logoutUser.js';
 import meUser from './routes/users/meUser.js';
 import { createMySQLSessionStore } from '../db/mysql/sessions/setupSession.js';
+import removeMetadata from './routes/files/removeMetadata.js';
+import downloadRouter from './routes/files/downloadFile.js';
 
 dotenv.config();
 
@@ -90,8 +91,8 @@ if (sessionStore !== null) {
 app.use('/files/upload', uploadFile);
 app.use('/files/list', listFiles);
 app.use('/files/delete', deleteFile);
-app.use('/files/delete', deleteFile);
-app.use('/files/delete_metadata', deleteMetadata);
+app.use('/files/remove-metadata', removeMetadata);
+app.use('/files/download', downloadRouter);
 
 app.use('/users/add', addUser);
 app.use('/users/get', getUser);
