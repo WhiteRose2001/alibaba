@@ -65,6 +65,13 @@ export default defineConfig(({ mode }) => {
           host: 'localhost',
           port: 5173,
           strictPort: true,
+          proxy: {
+            '/location': {
+              target: 'https://localhost:8081',
+              changeOrigin: true,
+              secure: false,
+            },
+          },
         }
       : undefined,
   };

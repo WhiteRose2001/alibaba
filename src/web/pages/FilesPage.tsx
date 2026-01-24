@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -25,6 +25,9 @@ import { FilesState } from '../hooks/types/SensitiveMetadata';
 import { useDeleteMetadata } from '../hooks/useDeleteMetadata';
 import DownloadIcon from '@mui/icons-material/Download';
 import { expressServerUrl } from '../../api/clients/callServer';
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Snackbar from '@mui/material/Snackbar';
 
 type Props = {
   filesState: FilesState;
@@ -38,9 +41,6 @@ const isImageFile = (fileName: string) => {
   return ext ? IMAGE_EXTENSIONS.includes(ext) : false;
 };
 
-/**
- * TEN SAM ENDPOINT CO ImagePreview
- */
 const getImageUrl = (fileName: string) =>
   `api/server/storage/files/${encodeURIComponent(fileName)}`;
 
@@ -48,18 +48,28 @@ const getFallbackLetter = (fileName: string) =>
   fileName.charAt(0).toUpperCase();
 
 export default function FilesPage({ filesState, fetchFiles }: Props) {
-  const { handleDelete } = useDeleteFile(fetchFiles);
-  const { handleDeleteMetadata } = useDeleteMetadata(fetchFiles);
+  const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const { handleDelete, deleteStatus } = useDeleteFile(fetchFiles);
+  const { handleDeleteMetadata, deleteMetadataStatus } =
+    useDeleteMetadata(fetchFiles);
+
+  useEffect(() => {
+    if (deleteMetadataStatus) {
+      setToastMessage(deleteMetadataStatus);
+    }
+  }, [deleteMetadataStatus]);
+
+  useEffect(() => {
+    if (deleteStatus) {
+      setToastMessage(deleteStatus);
+    }
+  }, [deleteStatus]);
 
   const [openInfo, setOpenInfo] = useState(false);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
 
   const { files, metadata } = filesState;
-
-  /**
-   * JEDNO ŹRÓDŁO PRAWDY
-   * (używane przez ikonę i miniaturę)
-   */
   const openMetadataPreview = (file: string) => {
     if (!metadata[file]) return;
     setSelectedFile(file);
@@ -92,6 +102,32 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
     window.URL.revokeObjectURL(url);
   };
 
+  const onDeleteFile = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    file: string,
+  ) => {
+    e.stopPropagation();
+    try {
+      setLoading(true);
+      await handleDelete(e, file);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onDeleteMetadata = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    file: string,
+  ) => {
+    e.stopPropagation();
+    try {
+      setLoading(true);
+      await handleDeleteMetadata(e, file);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -112,19 +148,17 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                   sx={{ px: 2, py: 1.5, alignItems: 'center' }}
                   secondaryAction={
                     <Stack direction="row" spacing={0.5}>
-                      {/* DOWNLOAD FILE */}
                       <Tooltip title={`Download ${file}`}>
                         <IconButton onClick={() => downloadFile(file)}>
                           <DownloadIcon />
                         </IconButton>
                       </Tooltip>
-                      {/* REMOVE METADATA */}
                       {hasMetadata && (
                         <Tooltip title={`Delete metadata for ${file}`}>
                           <span>
                             <IconButton
-                              disabled={!hasMetadata}
-                              onClick={(e) => handleDeleteMetadata(e, file)}
+                              disabled={!hasMetadata || loading}
+                              onClick={(e) => onDeleteMetadata(e, file)}
                             >
                               <DisabledVisibleIcon />
                             </IconButton>
@@ -132,7 +166,6 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                         </Tooltip>
                       )}
 
-                      {/* SHOW METADATA */}
                       <Tooltip
                         title={
                           hasMetadata
@@ -152,16 +185,14 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                         </span>
                       </Tooltip>
 
-                      {/* DELETE FILE */}
                       <Tooltip title={`Delete file ${file}`}>
-                        <IconButton onClick={(e) => handleDelete(e, file)}>
+                        <IconButton onClick={(e) => onDeleteFile(e, file)}>
                           <DeleteForeverIcon color="warning" />
                         </IconButton>
                       </Tooltip>
                     </Stack>
                   }
                 >
-                  {/* THUMBNAIL / FALLBACK */}
                   <ListItemAvatar sx={{ minWidth: 64 }}>
                     {isImage ? (
                       <Box
@@ -199,7 +230,6 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
                     )}
                   </ListItemAvatar>
 
-                  {/* FILE NAME */}
                   <ListItemText
                     primary={file}
                     primaryTypographyProps={{ noWrap: true, fontWeight: 500 }}
@@ -221,6 +251,19 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
           onClose={() => setOpenInfo(false)}
         />
       )}
+      <Snackbar
+        key={toastMessage}
+        open={Boolean(toastMessage)}
+        autoHideDuration={2000}
+        onClose={() => setToastMessage(null)}
+        message={toastMessage}
+      />
+      <Backdrop
+        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 999 }}
+        open={loading}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </Box>
   );
 }

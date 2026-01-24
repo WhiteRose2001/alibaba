@@ -6,13 +6,13 @@ export type UseRemoveMetadataResult = {
     event: React.MouseEvent<HTMLButtonElement>,
     fileName: string,
   ) => Promise<void>;
-  removeStatus: string | null;
+  deleteMetadataStatus: string | null;
 };
 
 export const useDeleteMetadata = (
   fetchFiles: () => Promise<void>,
 ): UseRemoveMetadataResult => {
-  const [removeStatus, setRemoveStatus] = useState<string | null>(null);
+  const [deleteMetadataStatus, setRemoveStatus] = useState<string | null>(null);
 
   const handleDeleteMetadata = useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>, filename: string) => {
@@ -36,5 +36,5 @@ export const useDeleteMetadata = (
     [fetchFiles],
   );
 
-  return { handleDeleteMetadata, removeStatus };
+  return { handleDeleteMetadata, deleteMetadataStatus };
 };
