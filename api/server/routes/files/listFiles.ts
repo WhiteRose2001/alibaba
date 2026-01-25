@@ -12,12 +12,19 @@ const __dirname = path.dirname(__filename);
 
 const listFiles = Router();
 
-listFiles.get('/', async (req, res) => {
+listFiles.post('/', async (req, res) => {
+  const userId = req.body.userId;
+
   const dirPath = __dirname + '/../../storage/files';
-  const files = fs.readdirSync(dirPath);
+  const rows = await getFilesData(userId);
+
+  const files = rows.map((r: Record<string, any>) => r.filename);
+
+  console.log(files);
+
   const metadata: Record<string, SensitiveMetadata | null> = {};
 
-  const rows = await getFilesData();
+  // const rows = await getFilesData(userId);
 
   const metadataMap = new Map<string, 'T' | 'N'>();
   rows.forEach((row: Record<string, any>) => {
@@ -56,8 +63,15 @@ listFiles.get('/', async (req, res) => {
 
 export default listFiles;
 
-async function getFilesData() {
+async function getFilesData(userId: number) {
   const pool = await getMySqlPool();
-  const [rows] = await pool.execute('SELECT filename, METADATA FROM files');
+  const [rows] = await pool.execute(
+    'SELECT filename, METADATA FROM files WHERE user_id = ?',
+    [userId],
+  );
+
+  console.log('USER_ID: ', userId);
+  console.log('ROWS: ', rows);
+
   return Array.isArray(rows) ? rows : [];
 }
