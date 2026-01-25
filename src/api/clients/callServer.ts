@@ -75,8 +75,6 @@ export async function callServer(
       body,
       credentials: 'include',
     });
-    console.log(response);
-
     const json = await response.json().catch(() => ({}));
     return {
       success: response.ok,

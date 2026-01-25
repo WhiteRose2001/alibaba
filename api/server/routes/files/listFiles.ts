@@ -19,12 +19,7 @@ listFiles.post('/', async (req, res) => {
   const rows = await getFilesData(userId);
 
   const files = rows.map((r: Record<string, any>) => r.filename);
-
-  console.log(files);
-
   const metadata: Record<string, SensitiveMetadata | null> = {};
-
-  // const rows = await getFilesData(userId);
 
   const metadataMap = new Map<string, 'T' | 'N'>();
   rows.forEach((row: Record<string, any>) => {
@@ -69,9 +64,6 @@ async function getFilesData(userId: number) {
     'SELECT filename, METADATA FROM files WHERE user_id = ?',
     [userId],
   );
-
-  console.log('USER_ID: ', userId);
-  console.log('ROWS: ', rows);
 
   return Array.isArray(rows) ? rows : [];
 }

@@ -41,8 +41,6 @@ export default function App({
     }
   }, [isLoggedIn, fetchFiles]);
 
-  console.log(isLoggedIn);
-
   return (
     <Routes>
       <Route
