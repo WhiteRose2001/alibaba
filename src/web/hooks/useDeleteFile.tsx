@@ -1,18 +1,22 @@
 import { useCallback, useState } from 'react';
 import { callServer } from '../../api/clients/callServer';
 
-export type useDeleteFileResult = {
+export type UseDeleteFileResult = {
   handleDelete: (
     event: React.MouseEvent<HTMLButtonElement>,
-    fileName: string
+    fileName: string,
   ) => Promise<void>;
   deleteStatus: string | null;
+  clearDeleteStatus: () => void;
 };
 
 export const useDeleteFile = (
   fetchFiles: () => Promise<void>,
-): useDeleteFileResult => {
+): UseDeleteFileResult => {
   const [deleteStatus, setDeleteStatus] = useState<string | null>(null);
+
+  const clearDeleteStatus = () => setDeleteStatus(null);
+
   const handleDelete = useCallback(
     async (event: React.MouseEvent<HTMLButtonElement>, filename: string) => {
       try {
@@ -23,22 +27,18 @@ export const useDeleteFile = (
         });
 
         if (response.success) {
-          setDeleteStatus(
-            // `✅ Uploaded: ${result.data.params.fileUrl || 'no URL returned'}`
-            '✅ File deleted successfully',
-          );
-
-          console.log(`File ${filename} deleted successfully`);
+          setDeleteStatus('✅ File deleted successfully');
           await fetchFiles();
         } else {
-          console.error('Error deleting file:', response.message);
+          setDeleteStatus(`❌ ${response.message}`);
         }
       } catch (error) {
         console.error('Delete operation failed:', error);
+        setDeleteStatus('❌ Delete failed');
       }
     },
     [fetchFiles],
   );
 
-  return { handleDelete, deleteStatus };
+  return { handleDelete, deleteStatus, clearDeleteStatus };
 };

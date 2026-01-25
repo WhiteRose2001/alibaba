@@ -28,8 +28,9 @@ export default function App({
     fetchFiles,
     loginStatus,
   } = useAuth();
-  const { handleDelete, deleteStatus } = useDeleteFile(fetchFiles);
-  const { file, uploadStatus, isUploading, handleUpload } =
+  const { handleDelete, deleteStatus, clearDeleteStatus } =
+    useDeleteFile(fetchFiles);
+  const { file, uploadStatus, isUploading, handleUpload, clearUploadStatus } =
     useUploadFile(fetchFiles);
 
   const [collapsed, setCollapsed] = React.useState(false);
@@ -92,6 +93,8 @@ export default function App({
                 deleteStatus={deleteStatus}
                 handleDelete={handleDelete}
                 handleUpload={handleUpload}
+                clearDeleteStatus={clearDeleteStatus}
+                clearUploadStatus={clearUploadStatus}
                 // jeśli Home potrzebuje uploaderAdapter, można go tu wygenerować i przekazać
               />
             }
@@ -108,7 +111,9 @@ export default function App({
           />
           <Route
             path="files"
-            element={<FilesPage filesState={filesState} fetchFiles={fetchFiles} />}
+            element={
+              <FilesPage filesState={filesState} fetchFiles={fetchFiles} />
+            }
           />
           <Route path="settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
