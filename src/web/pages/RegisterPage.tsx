@@ -17,7 +17,7 @@ export type RegisterPageProps = {
   handleLogin: (
     username: string,
     password: string,
-    register?: boolean
+    register?: boolean,
   ) => Promise<void> | void;
 };
 
@@ -59,7 +59,7 @@ export default function RegisterPage({ handleLogin }: RegisterPageProps) {
             <Box>
               <Typography variant="h5">Register</Typography>
               <Typography variant="body2" color="text.secondary">
-                Sign in to access Files Manager
+                Sign in to access MetaRem
               </Typography>
             </Box>
           </Box>

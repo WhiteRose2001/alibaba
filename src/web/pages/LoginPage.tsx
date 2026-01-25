@@ -79,7 +79,7 @@ export default function LoginPage({
             <Box>
               <Typography variant="h5">Welcome</Typography>
               <Typography variant="body2" color="text.secondary">
-                Sign in to access Files Manager (or continue to dashboard)
+                Sign in to access MetaRem
               </Typography>
             </Box>
           </Box>
