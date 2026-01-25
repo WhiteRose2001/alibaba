@@ -111,10 +111,8 @@ export default function TopBar({
             <MenuItem
               onClick={() => {
                 setAnchorEl(null);
-                // onNavigate?.('/');
-                console.log('Przed: ', isLoggedIn);
+                onNavigate?.('/');
                 onLogout();
-                console.log('Po: ', isLoggedIn);
               }}
             >
               Logout
