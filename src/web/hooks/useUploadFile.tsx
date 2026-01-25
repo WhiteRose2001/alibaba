@@ -6,21 +6,23 @@ export interface UseUploadFileResult {
   uploadStatus: string | null;
   isUploading: boolean;
   handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
+  clearUploadStatus: () => void;
 }
 
 export const useUploadFile = (
-  fetchFiles: () => Promise<void>
+  fetchFiles: () => Promise<void>,
 ): UseUploadFileResult => {
   const [file, setFile] = useState<File | null>(null);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+
+  const clearUploadStatus = () => setUploadStatus(null);
 
   const handleUpload = async (uploadedFile: File | null, userId: number) => {
     if (!uploadedFile) return;
 
     setFile(uploadedFile);
     setIsUploading(true);
-    setUploadStatus('Uploading...');
 
     try {
       const result = await callServer({
@@ -31,21 +33,24 @@ export const useUploadFile = (
       });
 
       if (result.success) {
-        setUploadStatus(
-          // `✅ Uploaded: ${result.data.params.fileUrl || 'no URL returned'}`
-          `${result.data.message}`
-        );
-        fetchFiles();
+        setUploadStatus(result.data.message);
+        await fetchFiles();
       } else {
-        setUploadStatus(`❌ Error ${result.status}: ${result.message}`);
+        setUploadStatus(`❌ ${result.message}`);
       }
     } catch (err) {
       console.error(err);
-      setUploadStatus('❌ Upload failed: unexpected error');
+      setUploadStatus('❌ Upload failed');
     } finally {
       setIsUploading(false);
     }
   };
 
-  return { file, uploadStatus, isUploading, handleUpload };
+  return {
+    file,
+    uploadStatus,
+    isUploading,
+    handleUpload,
+    clearUploadStatus,
+  };
 };

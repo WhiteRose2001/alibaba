@@ -6,6 +6,8 @@ import {
   Button,
   Chip,
   Snackbar,
+  Backdrop,
+  CircularProgress,
 } from '@mui/material';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import FolderIcon from '@mui/icons-material/Folder';
@@ -23,8 +25,10 @@ export interface HomeProps {
   handleUpload: (uploadedFile: File | null, userId: number) => Promise<void>;
   handleDelete: (
     e: React.MouseEvent<HTMLButtonElement>,
-    fileName: string
+    fileName: string,
   ) => Promise<void> | void;
+  clearUploadStatus: () => void;
+  clearDeleteStatus: () => void;
 }
 
 export default function Home({
@@ -36,13 +40,39 @@ export default function Home({
   deleteStatus,
   handleUpload,
   handleDelete,
+  clearUploadStatus,
+  clearDeleteStatus,
 }: HomeProps) {
   const [openUploadDialog, setOpenUploadDialog] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
+  const [loading, setLoading] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    if (uploadStatus) setSnackbarOpen(true);
+    if (uploadStatus) {
+      setToastMessage(uploadStatus);
+    }
   }, [uploadStatus]);
+
+  useEffect(() => {
+    if (deleteStatus) {
+      setToastMessage(deleteStatus);
+    }
+  }, [deleteStatus]);
+
+  const onDeleteFile = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    file: string,
+  ) => {
+    e.stopPropagation();
+    try {
+      setLoading(true);
+      await handleDelete(e, file);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box sx={{ pt: 3 }}>
       <Stack spacing={2}>
@@ -114,7 +144,7 @@ export default function Home({
                   <Button
                     size="small"
                     color="error"
-                    onClick={(e) => handleDelete(e, n)}
+                    onClick={(e) => onDeleteFile(e, n)}
                   >
                     Delete
                   </Button>
@@ -133,14 +163,24 @@ export default function Home({
 
         {/* {isUploading && <Typography>Uploading...</Typography>} */}
 
-        {uploadStatus && (
-          <Snackbar
-            open={snackbarOpen}
-            autoHideDuration={2000}
-            onClose={() => setSnackbarOpen(false)}
-            message={uploadStatus}
-          />
-        )}
+        <Snackbar
+          key={toastMessage}
+          open={Boolean(toastMessage)}
+          autoHideDuration={2000}
+          onClose={() => {
+            setToastMessage(null);
+            clearUploadStatus();
+            clearDeleteStatus();
+          }}
+          message={toastMessage}
+        />
+
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 999 }}
+          open={loading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Stack>
     </Box>
   );
