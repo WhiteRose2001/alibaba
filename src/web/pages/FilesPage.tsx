@@ -238,7 +238,7 @@ export default function FilesPage({ filesState, fetchFiles }: Props) {
               );
             })
           ) : (
-            <Typography color="text.secondary">Brak plików</Typography>
+            <Typography color="text.secondary">No files found</Typography>
           )}
         </List>
       </Paper>

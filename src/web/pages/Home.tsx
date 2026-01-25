@@ -89,7 +89,7 @@ export default function Home({
   return (
     <Box sx={{ pt: 3 }}>
       <Stack spacing={2}>
-        <Typography variant="h4">Welcome to Files Manager</Typography>
+        <Typography variant="h4">Welcome to MetaRem</Typography>
 
         <Typography color="text.secondary">
           This dashboard is a starter layout for managing and uploading files.

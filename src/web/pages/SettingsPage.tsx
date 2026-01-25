@@ -10,7 +10,7 @@ export default function SettingsPage() {
       </Typography>
 
       <Paper sx={{ p: 2 }}>
-        <Typography>Settings form goes here.</Typography>
+        <Typography>Feature</Typography>
       </Paper>
     </Box>
   );
