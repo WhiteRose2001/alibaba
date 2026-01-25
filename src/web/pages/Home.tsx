@@ -60,6 +60,19 @@ export default function Home({
     }
   }, [deleteStatus]);
 
+  const onUploadFile = async (uploadedFile: File | null) => {
+    if (!uploadedFile) return;
+
+    try {
+      setLoading(true);
+      await handleUpload(uploadedFile, currentUserId);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const onDeleteFile = async (
     e: React.MouseEvent<HTMLButtonElement>,
     file: string,
@@ -104,7 +117,7 @@ export default function Home({
             </Stack>
             <UploadDialog
               open={openUploadDialog}
-              handleUpload={handleUpload}
+              handleUpload={onUploadFile}
               currentUserId={currentUserId}
               onClose={() => setOpenUploadDialog(false)}
             />
