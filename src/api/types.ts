@@ -36,7 +36,8 @@ export type ParamsDeleteMetadata = {
 // Type for 'LIST_FILES' mode, which requires no additional params
 export type ParamsList = {
   mode: 'LIST_FILES';
-  method: 'GET';
+  method: 'POST';
+  userId: number;
 };
 
 export type ParamsUserAdd = {

@@ -31,7 +31,11 @@ export const useAuth = (): UseAuthResult => {
     }
 
     try {
-      const response = await callServer({ mode: 'LIST_FILES', method: 'GET' });
+      const response = await callServer({
+        mode: 'LIST_FILES',
+        method: 'POST',
+        userId: currentUserId,
+      });
       console.log(response);
       if (response.success && Array.isArray(response.data.params.files)) {
         setFilesState({

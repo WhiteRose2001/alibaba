@@ -15,7 +15,7 @@ const PATHS: Record<CallServerParams['mode'], string> = {
 
 const REQUIRED_FIELDS: Record<CallServerParams['mode'], string[]> = {
   UPLOAD: ['file'],
-  LIST_FILES: [],
+  LIST_FILES: ['userId'],
   DELETE_FILE: ['filename'],
   DELETE_METADATA: ['filename'],
   ADD_USER: ['login', 'password'],
@@ -75,6 +75,7 @@ export async function callServer(
       body,
       credentials: 'include',
     });
+    console.log(response);
 
     const json = await response.json().catch(() => ({}));
     return {
