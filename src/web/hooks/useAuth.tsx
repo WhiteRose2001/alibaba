@@ -36,7 +36,6 @@ export const useAuth = (): UseAuthResult => {
         method: 'POST',
         userId: currentUserId,
       });
-      console.log(response);
       if (response.success && Array.isArray(response.data.params.files)) {
         setFilesState({
           files: response.data.params.files,
